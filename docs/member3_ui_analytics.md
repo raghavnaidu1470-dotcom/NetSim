@@ -54,8 +54,8 @@ The UI visualizes the network graph, animates packet flows, allows disruption in
 
 ### Tab 5: Protocol Lab (`protocols/tcp_udp.py`, `protocols/crc.py`)
 - **Subtab A: TCP vs UDP Demo**:
-  - `simulate_tcp_stream(payload_size_kb, rtt_ms, loss_rate)`
-  - `simulate_udp_stream(payload_size_kb, rtt_ms, loss_rate)`
+  - `simulate_tcp_stream(payload_size_kb, rtt_ms, packet_loss_rate)`
+  - `simulate_udp_stream(payload_size_kb, rtt_ms, packet_loss_rate)`
 - **Subtab B: CRC Polynomial Division**:
   - `compute_crc(data_bits, polynomial)`
   - `verify_crc(received_bits, polynomial)`
