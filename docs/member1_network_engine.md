@@ -1,12 +1,12 @@
 # Member 1 Handbook: Network & Routing Engine
 
-**Owner**: Member 1  
+**Owner**: Ragghav Kamaraj (Member 1)  
 **Packages Owned**: `network/`, `data/topologies/`, and associated `tests/` (`test_devices.py`, `test_topology.py`, `test_link_state.py`, `test_distance_vector.py`, `test_routing_table.py`).
 
 ---
 
 ## 1. Overview & Responsibilities
-Member 1 provides the mathematical graph substrate and traditional routing baseline for NetSim-X.
+Ragghav Kamaraj provides the mathematical graph substrate and traditional routing baseline for NetSim-X.
 All other team members depend on Member 1's topology abstractions and routing interfaces.
 
 ### Key Deliverables
@@ -63,7 +63,7 @@ def enumerate_paths(
 
 ---
 
-## 3. Definition of Done Checklist for Member 1
+## 3. Definition of Done Checklist for Ragghav Kamaraj
 
 - [x] All demo topologies in `data/topologies/` pass validation.
 - [x] Invalid IPv4 strings rejected with clean `ValueError`.

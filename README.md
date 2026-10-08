@@ -117,9 +117,9 @@ To prevent merge conflicts, codebase modules are strictly partitioned:
 
 | Member | Package Ownership | Focus Area | Detailed Handbook |
 | :--- | :--- | :--- | :--- |
-| **Member 1** (Raghav) | `network/`, `data/topologies/` | Network topology, IPv4 validation, Dijkstra, Distance Vector, routing tables | [`docs/member1_network_engine.md`](docs/member1_network_engine.md) |
+| **Member 1** (Ragghav Kamaraj) | `network/`, `data/topologies/` | Network topology, IPv4 validation, Dijkstra, Distance Vector, routing tables | [`docs/member1_network_engine.md`](docs/member1_network_engine.md) |
 | **Member 2** (Harish) | `adaptive/`, `simulation/` | XAR scoring, normalization, traffic profiles, explanation engine, failure simulation | [`docs/member2_xar_simulation.md`](docs/member2_xar_simulation.md) |
-| **Member 3** (Akhilesh) | `ui/`, `protocols/` | Streamlit dashboard, NetworkX drawing, comparison benchmark, TCP/UDP & CRC demos | [`docs/member3_ui_analytics.md`](docs/member3_ui_analytics.md) |
+| **Member 3** (Akhilesh Reddy) | `ui/`, `protocols/` | Streamlit dashboard, NetworkX drawing, comparison benchmark, TCP/UDP & CRC demos | [`docs/member3_ui_analytics.md`](docs/member3_ui_analytics.md) |
 
 ---
 

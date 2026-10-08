@@ -32,7 +32,7 @@ This backlog tracks the foundational issues assigned to team members across the 
   - Unskip and pass tests in `tests/test_xar.py`.
 
 ### Issue #3: [Member 3] Wire Up Interactive Streamlit Visualizer with Live Route Highlighting
-- **Assignee**: Member 3 (Akhilesh)
+- **Assignee**: Member 3 (Akhilesh Reddy)
 - **Role**: `ui/app.py`, `ui/topology_view.py`
 - **Schedule Due**: Day 5
 - **Doc Link**: [`docs/member3_ui_analytics.md#2-streamlit-tab-by-tab-wireframes-ascii`](docs/member3_ui_analytics.md#2-streamlit-tab-by-tab-wireframes-ascii)
@@ -58,7 +58,7 @@ This backlog tracks the foundational issues assigned to team members across the 
   - Unskip and pass `tests/test_explanation.py`.
 
 ### Issue #5: [Member 3] Connect Algorithm Comparison Dashboard & Explanation Panel
-- **Assignee**: Member 3 (Akhilesh)
+- **Assignee**: Member 3 (Akhilesh Reddy)
 - **Role**: `ui/dashboard.py`
 - **Schedule Due**: Day 7
 - **Doc Link**: [`docs/member3_ui_analytics.md#tab-4-algorithm-comparison-uidashboardpy`](docs/member3_ui_analytics.md#tab-4-algorithm-comparison-uidashboardpy)
@@ -84,7 +84,7 @@ This backlog tracks the foundational issues assigned to team members across the 
   - Unskip and pass tests in `tests/test_failures.py` and `tests/test_congestion.py`.
 
 ### Issue #7: [Member 3] Interactive Network Disruption Controls in UI
-- **Assignee**: Member 3 (Akhilesh)
+- **Assignee**: Member 3 (Akhilesh Reddy)
 - **Role**: `ui/app.py`, `ui/packet_view.py`
 - **Schedule Due**: Day 9
 - **Doc Link**: [`docs/member3_ui_analytics.md#tab-3-network-disruption--recovery`](docs/member3_ui_analytics.md#tab-3-network-disruption--recovery)
@@ -99,7 +99,7 @@ This backlog tracks the foundational issues assigned to team members across the 
 ## Milestone 4: Protocol Demonstrations (Day 12)
 
 ### Issue #8: [Member 3] Implement Transport-Layer Demonstrations (TCP vs UDP)
-- **Assignee**: Member 3 (Akhilesh)
+- **Assignee**: Member 3 (Akhilesh Reddy)
 - **Role**: `protocols/tcp_udp.py`
 - **Schedule Due**: Day 12
 - **Doc Link**: [`docs/member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy`](docs/member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy)
@@ -110,7 +110,7 @@ This backlog tracks the foundational issues assigned to team members across the 
   - Unskip and pass `tests/test_tcp_udp.py`.
 
 ### Issue #9: [Member 3] Implement CRC Polynomial Error Detection Demonstration
-- **Assignee**: Member 3 (Akhilesh)
+- **Assignee**: Member 3 (Akhilesh Reddy)
 - **Role**: `protocols/crc.py`
 - **Schedule Due**: Day 12
 - **Doc Link**: [`docs/member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy`](docs/member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy)

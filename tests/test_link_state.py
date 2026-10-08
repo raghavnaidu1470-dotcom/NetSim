@@ -1,4 +1,4 @@
-"""Unit tests for Link State / Dijkstra routing algorithm (Member 1)."""
+"""Unit tests for Link State / Dijkstra routing algorithm (Member 1 - Ragghav Kamaraj)."""
 
 from network.devices import Link, Node
 from network.link_state import compute_all_shortest_paths_from_source, link_state_dijkstra

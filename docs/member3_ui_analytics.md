@@ -1,12 +1,12 @@
 # Member 3 Handbook: UI, Analytics & Protocol Demonstrations
 
-**Owner**: Akhilesh (Member 3)  
+**Owner**: Akhilesh Reddy (Member 3)  
 **Packages Owned**: `ui/` (`app.py`, `topology_view.py`, `controls.py`, `dashboard.py`, `packet_view.py`), `protocols/` (`tcp_udp.py`, `crc.py`), and corresponding tests in `tests/`.
 
 ---
 
 ## 1. Purpose & Responsibilities
-Akhilesh builds the interactive front-end and educational protocol demos for NetSim-X.
+Akhilesh Reddy builds the interactive front-end and educational protocol demos for NetSim-X.
 The UI visualizes the network graph, animates packet flows, allows disruption injection, and compares algorithms side-by-side.
 
 ---
@@ -84,7 +84,7 @@ streamlit run ui/app.py
 
 ---
 
-## 5. Definition of Done Checklist for Akhilesh
+## 5. Definition of Done Checklist for Akhilesh Reddy
 - [ ] Working interactive Streamlit app with all 5 functional tabs.
 - [ ] Network graph renders with dynamic path highlighting.
 - [ ] Comparison table updates cleanly based on active topology.
