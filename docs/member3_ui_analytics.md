@@ -48,9 +48,9 @@ The UI visualizes the network graph, animates packet flows, allows disruption in
 - **Table Format**:
   | Algorithm | Path | Hop Count | Latency (ms) | Packet Loss | Congestion | Score |
   | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-  | Dijkstra | `PC1 -> R1 -> R2 -> R5 -> PC2` | 4 | 79.0 | 18.8% | 82% | 0.432 |
-  | Distance Vector | `PC1 -> R1 -> R2 -> R5 -> PC2` | 4 | 79.0 | 18.8% | 82% | 0.432 |
-  | XAR | `PC1 -> R1 -> R3 -> R4 -> R5 -> PC2` | 5 | 36.0 | 2.9% | 12% | 0.179 |
+  | Dijkstra | `PC1 -> R1 -> R2 -> R5 -> PC2` | 4 | 79.0 | 19.17% | 82% | 0.433 |
+  | Distance Vector | `PC1 -> R1 -> R2 -> R5 -> PC2` | 4 | 79.0 | 19.17% | 82% | 0.433 |
+  | XAR | `PC1 -> R1 -> R3 -> R4 -> R5 -> PC2` | 5 | 36.0 | 3.16% | 12% | 0.180 |
 
 ### Tab 5: Protocol Lab (`protocols/tcp_udp.py`, `protocols/crc.py`)
 - **Subtab A: TCP vs UDP Demo**:

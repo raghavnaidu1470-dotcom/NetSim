@@ -72,15 +72,18 @@ All demo topologies reside in `data/topologies/` and can be loaded directly from
 
 1. **`why_shortest_is_not_best.json`**:
    - Demonstrates why minimum hop count is often suboptimal.
-   - **Dijkstra (hop-count metric)** picks the 4-hop congested path (`PC1 -> R1 -> R2 -> R5 -> PC2`, 79.0 ms, 82% congestion, 19.17% loss).
-   - **XAR** picks the clean 5-hop path (`PC1 -> R1 -> R3 -> R4 -> R5 -> PC2`, 36.0 ms, 12% congestion, 3.16% loss).
+   - **Dijkstra (hop-count metric)** picks the 4-hop congested path (`PC1 -> R1 -> R2 -> R5 -> PC2`, 79.0 ms latency, 82.0% congestion, 19.17% packet loss, 65.47% reliability).
+   - **XAR** picks the clean 5-hop path (`PC1 -> R1 -> R3 -> R4 -> R5 -> PC2`, 36.0 ms latency, 12.0% congestion, 3.16% packet loss, 96.84% reliability).
    - *Note on metrics*: With a latency metric, Dijkstra would also pick the better 36.0 ms route. The demo intentionally runs Dijkstra on hop count to show the classic shortest-path pitfall where unweighted hop minimization routes traffic directly into a congested bottleneck.
 2. **`router_failure.json`**:
-   - Normal traffic routes across intermediate router `R2`.
-   - Failing `R2` triggers dynamic recovery, showing rerouting over a multi-hop backup path, recovery delay, and packets dropped.
+   - Demonstrates runtime router disruption and dynamic path recovery.
+   - **Pre-failure route**: Traffic flows across intermediate router `R2` along `PC1 -> R1 -> R2 -> PC2` (3 hops, 14.0 ms latency, 10.0% congestion, 0.70% packet loss, 98.80% reliability).
+   - **Post-failure route**: Failing `R2` triggers dynamic recovery, re-routing over backup path `PC1 -> R1 -> R3 -> R4 -> PC2` (4 hops, 44.0 ms latency, 15.0% congestion, 2.58% packet loss, 94.98% reliability).
+   - **Recovery metrics**: With default parameters ($T_{\mathrm{detect}} = 150\text{ ms}$, $N_{\mathrm{rounds}} = 4$, $T_{\mathrm{round}} = 50\text{ ms}$), total recovery delay is $350.0\text{ ms}$.
 3. **`traffic_profile_change.json`**:
-   - Demonstrates profile-directed path selection.
-   - Real-Time profile chooses low-latency path despite minor loss; Reliable Data Transfer selects lossless, ultra-reliable path.
+   - Demonstrates profile-directed path selection between two candidate 4-hop paths (`PC1 -> R1 -> R3 -> R4 -> PC2` vs `PC1 -> R1 -> R2 -> R4 -> PC2`).
+   - **Real-Time profile**: Chooses low-latency path `PC1 -> R1 -> R3 -> R4 -> PC2` (4 hops, 17.0 ms latency, 14.0% congestion, 14.61% packet loss, XAR score 0.1458 vs 0.2085).
+   - **Reliable Data Transfer profile**: Chooses ultra-reliable path `PC1 -> R1 -> R2 -> R4 -> PC2` (4 hops, 69.0 ms latency, 8.0% congestion, 0.40% packet loss, 99.60% reliability, XAR score 0.0826 vs 0.1654).
 
 ---
 
