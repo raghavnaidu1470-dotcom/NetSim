@@ -1,0 +1,85 @@
+{
+  "name": "why_shortest_is_not_best",
+  "description": "Demonstrates why hop-count shortest path (Dijkstra) is suboptimal under congestion and loss compared to XAR.",
+  "nodes": [
+    {"id": "PC1", "ip": "192.168.1.10", "type": "host", "active": true},
+    {"id": "R1", "ip": "192.168.1.1", "type": "router", "active": true},
+    {"id": "R2", "ip": "192.168.2.1", "type": "router", "active": true},
+    {"id": "R3", "ip": "192.168.3.1", "type": "router", "active": true},
+    {"id": "R4", "ip": "192.168.4.1", "type": "router", "active": true},
+    {"id": "R5", "ip": "192.168.5.1", "type": "router", "active": true},
+    {"id": "PC2", "ip": "192.168.5.10", "type": "host", "active": true}
+  ],
+  "links": [
+    {
+      "source": "PC1",
+      "destination": "R1",
+      "latency": 2.0,
+      "bandwidth": 1000.0,
+      "congestion": 0.05,
+      "packet_loss": 0.001,
+      "reliability": 0.999,
+      "active": true
+    },
+    {
+      "source": "R1",
+      "destination": "R2",
+      "latency": 35.0,
+      "bandwidth": 100.0,
+      "congestion": 0.78,
+      "packet_loss": 0.09,
+      "reliability": 0.82,
+      "active": true
+    },
+    {
+      "source": "R2",
+      "destination": "R5",
+      "latency": 40.0,
+      "bandwidth": 100.0,
+      "congestion": 0.82,
+      "packet_loss": 0.11,
+      "reliability": 0.80,
+      "active": true
+    },
+    {
+      "source": "R1",
+      "destination": "R3",
+      "latency": 10.0,
+      "bandwidth": 500.0,
+      "congestion": 0.10,
+      "packet_loss": 0.01,
+      "reliability": 0.99,
+      "active": true
+    },
+    {
+      "source": "R3",
+      "destination": "R4",
+      "latency": 12.0,
+      "bandwidth": 500.0,
+      "congestion": 0.12,
+      "packet_loss": 0.01,
+      "reliability": 0.99,
+      "active": true
+    },
+    {
+      "source": "R4",
+      "destination": "R5",
+      "latency": 10.0,
+      "bandwidth": 500.0,
+      "congestion": 0.10,
+      "packet_loss": 0.01,
+      "reliability": 0.99,
+      "active": true
+    },
+    {
+      "source": "R5",
+      "destination": "PC2",
+      "latency": 2.0,
+      "bandwidth": 1000.0,
+      "congestion": 0.05,
+      "packet_loss": 0.001,
+      "reliability": 0.999,
+      "active": true
+    }
+  ]
+}

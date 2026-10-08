@@ -1,0 +1,74 @@
+{
+  "name": "router_failure",
+  "description": "Demonstrates runtime router disruption where failure of R2 forces dynamic route recovery over an alternate multi-hop path.",
+  "nodes": [
+    {"id": "PC1", "ip": "192.168.10.2", "type": "host", "active": true},
+    {"id": "R1", "ip": "192.168.10.1", "type": "router", "active": true},
+    {"id": "R2", "ip": "192.168.20.1", "type": "router", "active": true},
+    {"id": "R3", "ip": "192.168.30.1", "type": "router", "active": true},
+    {"id": "R4", "ip": "192.168.40.1", "type": "router", "active": true},
+    {"id": "PC2", "ip": "192.168.50.2", "type": "host", "active": true}
+  ],
+  "links": [
+    {
+      "source": "PC1",
+      "destination": "R1",
+      "latency": 2.0,
+      "bandwidth": 1000.0,
+      "congestion": 0.05,
+      "packet_loss": 0.001,
+      "reliability": 0.999,
+      "active": true
+    },
+    {
+      "source": "R1",
+      "destination": "R2",
+      "latency": 10.0,
+      "bandwidth": 1000.0,
+      "congestion": 0.10,
+      "packet_loss": 0.005,
+      "reliability": 0.99,
+      "active": true
+    },
+    {
+      "source": "R2",
+      "destination": "PC2",
+      "latency": 2.0,
+      "bandwidth": 1000.0,
+      "congestion": 0.05,
+      "packet_loss": 0.001,
+      "reliability": 0.999,
+      "active": true
+    },
+    {
+      "source": "R1",
+      "destination": "R3",
+      "latency": 18.0,
+      "bandwidth": 500.0,
+      "congestion": 0.15,
+      "packet_loss": 0.01,
+      "reliability": 0.98,
+      "active": true
+    },
+    {
+      "source": "R3",
+      "destination": "R4",
+      "latency": 20.0,
+      "bandwidth": 500.0,
+      "congestion": 0.15,
+      "packet_loss": 0.01,
+      "reliability": 0.98,
+      "active": true
+    },
+    {
+      "source": "R4",
+      "destination": "PC2",
+      "latency": 4.0,
+      "bandwidth": 500.0,
+      "congestion": 0.10,
+      "packet_loss": 0.005,
+      "reliability": 0.99,
+      "active": true
+    }
+  ]
+}

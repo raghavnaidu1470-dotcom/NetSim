@@ -1,0 +1,36 @@
+# NetSim-X Code Owners
+# Each team member owns distinct packages to prevent git merge conflicts.
+# Note: Schemas in docs/spec.md require consensus across all 3 members.
+
+# Global fallback
+* @member1-network @member2-adaptive @member3-ui
+
+# Member 1: Network & Routing Engine
+/network/ @member1-network
+/data/topologies/ @member1-network
+/tests/test_devices.py @member1-network
+/tests/test_topology.py @member1-network
+/tests/test_link_state.py @member1-network
+/tests/test_distance_vector.py @member1-network
+/tests/test_routing_table.py @member1-network
+/docs/member1_network_engine.md @member1-network
+
+# Member 2 (Harish): Explainable Adaptive Routing (XAR) & Simulation
+/adaptive/ @member2-adaptive
+/simulation/ @member2-adaptive
+/tests/test_xar.py @member2-adaptive
+/tests/test_metrics.py @member2-adaptive
+/tests/test_explanation.py @member2-adaptive
+/tests/test_traffic_profiles.py @member2-adaptive
+/tests/test_failures.py @member2-adaptive
+/tests/test_congestion.py @member2-adaptive
+/tests/test_packet_loss.py @member2-adaptive
+/docs/member2_xar_simulation.md @member2-adaptive
+
+# Member 3 (Akhilesh): User Interface, Dashboards, & Protocol Demos
+/ui/ @member3-ui
+/protocols/ @member3-ui
+/tests/test_ui_components.py @member3-ui
+/tests/test_tcp_udp.py @member3-ui
+/tests/test_crc.py @member3-ui
+/docs/member3_ui_analytics.md @member3-ui

@@ -1,0 +1,74 @@
+{
+  "name": "traffic_profile_change",
+  "description": "Demonstrates how traffic profile weights steer XAR route choice: Real-Time prefers low latency despite moderate loss, whereas Reliable Data Transfer chooses ultra-reliable, lossless routes.",
+  "nodes": [
+    {"id": "PC1", "ip": "10.0.1.2", "type": "host", "active": true},
+    {"id": "R1", "ip": "10.0.1.1", "type": "router", "active": true},
+    {"id": "R2", "ip": "10.0.2.1", "type": "router", "active": true},
+    {"id": "R3", "ip": "10.0.3.1", "type": "router", "active": true},
+    {"id": "R4", "ip": "10.0.4.1", "type": "router", "active": true},
+    {"id": "PC2", "ip": "10.0.5.2", "type": "host", "active": true}
+  ],
+  "links": [
+    {
+      "source": "PC1",
+      "destination": "R1",
+      "latency": 2.0,
+      "bandwidth": 1000.0,
+      "congestion": 0.02,
+      "packet_loss": 0.001,
+      "reliability": 0.999,
+      "active": true
+    },
+    {
+      "source": "R1",
+      "destination": "R2",
+      "latency": 32.0,
+      "bandwidth": 500.0,
+      "congestion": 0.08,
+      "packet_loss": 0.001,
+      "reliability": 0.999,
+      "active": true
+    },
+    {
+      "source": "R2",
+      "destination": "R4",
+      "latency": 33.0,
+      "bandwidth": 500.0,
+      "congestion": 0.08,
+      "packet_loss": 0.001,
+      "reliability": 0.999,
+      "active": true
+    },
+    {
+      "source": "R1",
+      "destination": "R3",
+      "latency": 6.0,
+      "bandwidth": 500.0,
+      "congestion": 0.12,
+      "packet_loss": 0.07,
+      "reliability": 0.90,
+      "active": true
+    },
+    {
+      "source": "R3",
+      "destination": "R4",
+      "latency": 7.0,
+      "bandwidth": 500.0,
+      "congestion": 0.14,
+      "packet_loss": 0.08,
+      "reliability": 0.89,
+      "active": true
+    },
+    {
+      "source": "R4",
+      "destination": "PC2",
+      "latency": 2.0,
+      "bandwidth": 1000.0,
+      "congestion": 0.02,
+      "packet_loss": 0.001,
+      "reliability": 0.999,
+      "active": true
+    }
+  ]
+}
