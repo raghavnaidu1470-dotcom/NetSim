@@ -1,6 +1,6 @@
 # NetSim-X: Explainable Adaptive Routing & Network Resilience Simulation Framework
 
-[![CI Tests](https://github.com/raghavnaidu1470-dotcom/netsim-x/actions/workflows/test.yml/badge.svg)](https://github.com/raghavnaidu1470-dotcom/netsim-x/actions)
+[![CI Tests](https://github.com/raghavnaidu1470-dotcom/NetSim/actions/workflows/test.yml/badge.svg)](https://github.com/raghavnaidu1470-dotcom/NetSim/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
 [![Framework: Streamlit](https://img.shields.io/badge/UI-Streamlit-red.svg)](https://streamlit.io/)
@@ -87,8 +87,8 @@ All demo topologies reside in `data/topologies/` and can be loaded directly from
 
 ### 1. Clone & Set Up Environment
 ```bash
-git clone https://github.com/raghavnaidu1470-dotcom/netsim-x.git
-cd netsim-x
+git clone https://github.com/raghavnaidu1470-dotcom/NetSim.git
+cd NetSim
 
 python3 -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate

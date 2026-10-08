@@ -14,8 +14,8 @@ Welcome to **NetSim-X**! This guide gets you up and running in under 5 minutes a
 ### Setup Commands
 ```bash
 # 1. Clone repository
-git clone https://github.com/raghavnaidu1470-dotcom/netsim-x.git
-cd netsim-x
+git clone https://github.com/raghavnaidu1470-dotcom/NetSim.git
+cd NetSim
 
 # 2. Create and activate virtual environment
 python3 -m venv .venv
