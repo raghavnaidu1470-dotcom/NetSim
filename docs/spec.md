@@ -121,30 +121,31 @@ All profiles are normalized such that $\sum w = 1.00$:
 
 Using `data/topologies/why_shortest_is_not_best.json` between `PC1` and `PC2`:
 
-- **Route A (Shortest Hop / Dijkstra)**: `PC1 -> R1 -> R2 -> R5 -> PC2` (4 hops)
-  - Raw: Latency = $79.0\text{ ms}$, Loss = $0.188$, Bottleneck Congestion = $0.82$, Reliability = $0.655$.
+- **Route A (Dijkstra (hop-count metric))**: `PC1 -> R1 -> R2 -> R5 -> PC2` (4 hops)
+  - Raw: Latency = $79.0\text{ ms}$, Loss = $0.1917$ ($19.17\%$), Bottleneck Congestion = $0.820$ ($82\%$), Reliability = $0.6547$.
   - Normalized:
     - $H = 4 / 10 = 0.400$
     - $L = 79.0 / 200 = 0.395$
     - $C = 0.820$
-    - $P = 0.188$
-    - $1 - R = 1 - 0.655 = 0.345$
+    - $P = 0.1917$
+    - $1 - R = 1 - 0.6547 = 0.3453$
   - Standard Score:
-    $$\text{Score}(A) = 0.20(0.40) + 0.25(0.395) + 0.20(0.82) + 0.20(0.188) + 0.15(0.345) = \mathbf{0.432}$$
+    $$\text{Score}(A) = 0.20(0.400) + 0.25(0.395) + 0.20(0.820) + 0.20(0.1917) + 0.15(0.3453) = \mathbf{0.4329}$$
 
 - **Route B (Alternative / XAR Choice)**: `PC1 -> R1 -> R3 -> R4 -> R5 -> PC2` (5 hops)
-  - Raw: Latency = $36.0\text{ ms}$, Loss = $0.029$, Bottleneck Congestion = $0.12$, Reliability = $0.969$.
+  - Raw: Latency = $36.0\text{ ms}$, Loss = $0.0316$ ($3.16\%$), Bottleneck Congestion = $0.120$ ($12\%$), Reliability = $0.9684$.
   - Normalized:
     - $H = 5 / 10 = 0.500$
     - $L = 36.0 / 200 = 0.180$
     - $C = 0.120$
-    - $P = 0.029$
-    - $1 - R = 1 - 0.969 = 0.031$
+    - $P = 0.0316$
+    - $1 - R = 1 - 0.9684 = 0.0316$
   - Standard Score:
-    $$\text{Score}(B) = 0.20(0.50) + 0.25(0.180) + 0.20(0.12) + 0.20(0.029) + 0.15(0.031) = \mathbf{0.179}$$
+    $$\text{Score}(B) = 0.20(0.500) + 0.25(0.180) + 0.20(0.120) + 0.20(0.0316) + 0.15(0.0316) = \mathbf{0.1801}$$
 
-**Result**: $\text{Score}(B) = 0.179 < \text{Score}(A) = 0.432$.
-XAR picks Route B even though it is 1 hop longer, because it reduces latency by $43\text{ ms}$, reduces congestion by $70\%$, and drops loss by $15.9\%$.
+**Result**: $\text{Score}(B) = 0.1801 < \text{Score}(A) = 0.4329$.
+XAR picks Route B even though it is 1 hop longer, because it reduces latency by $43.0\text{ ms}$, reduces congestion by $70.0\%$, and drops packet loss by $16.01\%$.
+*Note*: With a latency metric, Dijkstra would also select Route B ($36.0\text{ ms} < 79.0\text{ ms}$); this demo specifically configures **Dijkstra (hop-count metric)** to showcase the classic shortest-path pitfall where unweighted hop minimization routes traffic directly into a heavily congested bottleneck.
 
 ---
 

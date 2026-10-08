@@ -17,7 +17,7 @@ All other team members depend on Member 1's topology abstractions and routing in
    - Convert network topologies into `networkx.Graph` instances filtering out inactive entities.
    - Enumerate all simple loop-free paths up to a hop cutoff via `enumerate_paths(src, dst, max_hops)`.
 3. **Traditional Routing Engines**:
-   - **Link State / Dijkstra**: Shortest path computation based on hop count or latency.
+   - **Link State / Dijkstra**: Shortest path computation based on hop count or latency. In demo scenarios such as `why_shortest_is_not_best.json`, we explicitly specify **Dijkstra (hop-count metric)** to showcase the classic shortest-path pitfall (selecting a heavily congested 4-hop path over an uncongested 5-hop path). With a latency metric, Dijkstra would also pick the better 36.0 ms route; using hop count demonstrates why unweighted shortest-path routing fails in real-world congested networks.
    - **Distance Vector**: Iterative round-by-round Bellman-Ford simulation with convergence round counting and routing table updates.
 4. **Router Forwarding Tables**:
    - `RoutingTable` structures and dynamic invalidation when next-hop routers crash.

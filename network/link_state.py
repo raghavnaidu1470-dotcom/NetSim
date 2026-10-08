@@ -26,7 +26,9 @@ def link_state_dijkstra(
     """Compute the shortest path using Link State / Dijkstra's algorithm.
 
     By default in standard networking pedagogy, hop count (unweighted shortest path)
-    or cost metric is used.
+    or cost metric is used. Note: On topologies like why_shortest_is_not_best.json,
+    Dijkstra (hop-count metric) picks the congested 4-hop path, whereas Dijkstra (latency metric)
+    selects the lower-latency 5-hop path. This illustrates the classic shortest-path pitfall.
 
     Args:
         topology: The active Topology instance.

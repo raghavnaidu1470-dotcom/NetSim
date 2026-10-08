@@ -72,8 +72,9 @@ All demo topologies reside in `data/topologies/` and can be loaded directly from
 
 1. **`why_shortest_is_not_best.json`**:
    - Demonstrates why minimum hop count is often suboptimal.
-   - Dijkstra picks the 4-hop congested path (`PC1 -> R1 -> R2 -> R5 -> PC2`, 79 ms, 82% congestion, 18.8% loss).
-   - XAR picks the clean 5-hop path (`PC1 -> R1 -> R3 -> R4 -> R5 -> PC2`, 36 ms, 12% congestion, 2.9% loss).
+   - **Dijkstra (hop-count metric)** picks the 4-hop congested path (`PC1 -> R1 -> R2 -> R5 -> PC2`, 79.0 ms, 82% congestion, 19.17% loss).
+   - **XAR** picks the clean 5-hop path (`PC1 -> R1 -> R3 -> R4 -> R5 -> PC2`, 36.0 ms, 12% congestion, 3.16% loss).
+   - *Note on metrics*: With a latency metric, Dijkstra would also pick the better 36.0 ms route. The demo intentionally runs Dijkstra on hop count to show the classic shortest-path pitfall where unweighted hop minimization routes traffic directly into a congested bottleneck.
 2. **`router_failure.json`**:
    - Normal traffic routes across intermediate router `R2`.
    - Failing `R2` triggers dynamic recovery, showing rerouting over a multi-hop backup path, recovery delay, and packets dropped.
