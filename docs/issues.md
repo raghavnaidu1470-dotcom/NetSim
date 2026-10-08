@@ -15,7 +15,7 @@ This backlog tracks the foundational issues assigned to team members across the 
 - **Acceptance Criteria**:
   - Implement `aggregate_path_metrics(topology, path)` returning latency, loss, reliability, bottleneck congestion, and hops.
   - Implement `normalize_metrics(raw)` applying `MAX_LATENCY_CEILING = 200.0` and `MAX_HOPS_CEILING = 10.0`.
-  - Implement `compute_path_score(norm, weights)` evaluating $Score = w_h H + w_l L + w_c C + w_p P + w_r (1-R)$.
+  - Implement `compute_path_score(norm, weights)` evaluating $\text{Score} = w_h \cdot H + w_l \cdot L + w_c \cdot C + w_p \cdot P + w_r \cdot (1-R)$.
   - Unskip and pass all tests in `tests/test_metrics.py`.
 
 ### Issue #2: [Member 2] Implement XAR Candidate Path Evaluation & Optimal Selection
