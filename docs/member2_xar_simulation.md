@@ -89,30 +89,31 @@ def trigger_node_failure(
 ## 3. Worked Mathematical Example on `why_shortest_is_not_best.json`
 
 Between `PC1` and `PC2`:
-- **Candidate 1 (Shortest / Dijkstra)**: `PC1 -> R1 -> R2 -> R5 -> PC2` (4 hops)
+- **Candidate 1 (Dijkstra (hop-count metric))**: `PC1 -> R1 -> R2 -> R5 -> PC2` (4 hops)
   - Hops: 4 $\implies H = 4 / 10 = 0.40$
-  - Latency: $2 + 35 + 40 + 2 = 79\text{ ms} \implies L = 79 / 200 = 0.395$
-  - Congestion: $\max(0.05, 0.78, 0.82, 0.05) = 0.82 \implies C = 0.82$
-  - Loss: $1 - (0.999 \times 0.91 \times 0.89 \times 0.999) = 0.188 \implies P = 0.188$
-  - Reliability: $0.999 \times 0.82 \times 0.80 \times 0.999 = 0.655 \implies 1-R = 0.345$
+  - Latency: $2 + 35 + 40 + 2 = 79.0\text{ ms} \implies L = 79.0 / 200 = 0.395$
+  - Congestion: $\max(0.05, 0.78, 0.82, 0.05) = 0.82 \implies C = 0.820$
+  - Loss: $1 - (0.999 \times 0.91 \times 0.89 \times 0.999) = 0.1917 \implies P = 0.1917$
+  - Reliability: $0.999 \times 0.82 \times 0.80 \times 0.999 = 0.6547 \implies 1-R = 0.3453$
   - **Score (Standard Profile)**:
-    $$0.20(0.40) + 0.25(0.395) + 0.20(0.82) + 0.20(0.188) + 0.15(0.345) = \mathbf{0.432}$$
+    $$0.20(0.40) + 0.25(0.395) + 0.20(0.82) + 0.20(0.1917) + 0.15(0.3453) = \mathbf{0.4329}$$
 
 - **Candidate 2 (Alternative / XAR)**: `PC1 -> R1 -> R3 -> R4 -> R5 -> PC2` (5 hops)
   - Hops: 5 $\implies H = 5 / 10 = 0.50$
-  - Latency: $2 + 10 + 12 + 10 + 2 = 36\text{ ms} \implies L = 36 / 200 = 0.180$
-  - Congestion: $\max(0.05, 0.10, 0.12, 0.10, 0.05) = 0.12 \implies C = 0.12$
-  - Loss: $1 - (0.999 \times 0.99 \times 0.99 \times 0.99 \times 0.999) = 0.029 \implies P = 0.029$
-  - Reliability: $0.999 \times 0.99 \times 0.99 \times 0.99 \times 0.999 = 0.969 \implies 1-R = 0.031$
+  - Latency: $2 + 10 + 12 + 10 + 2 = 36.0\text{ ms} \implies L = 36.0 / 200 = 0.180$
+  - Congestion: $\max(0.05, 0.10, 0.12, 0.10, 0.05) = 0.12 \implies C = 0.120$
+  - Loss: $1 - (0.999 \times 0.99 \times 0.99 \times 0.99 \times 0.999) = 0.0316 \implies P = 0.0316$
+  - Reliability: $0.999 \times 0.99 \times 0.99 \times 0.99 \times 0.999 = 0.9684 \implies 1-R = 0.0316$
   - **Score (Standard Profile)**:
-    $$0.20(0.50) + 0.25(0.180) + 0.20(0.12) + 0.20(0.029) + 0.15(0.031) = \mathbf{0.179}$$
+    $$0.20(0.50) + 0.25(0.180) + 0.20(0.12) + 0.20(0.0316) + 0.15(0.0316) = \mathbf{0.1801}$$
 
-**Outcome**: Score $0.179 < 0.432$. XAR chooses Candidate 2.
+**Outcome**: Score $0.1801 < 0.4329$. XAR chooses Candidate 2.
+*Note*: With a latency metric, Dijkstra would also select Candidate 2 ($36.0\text{ ms} < 79.0\text{ ms}$); this demo intentionally runs Dijkstra on hop count to expose the classic shortest-path pitfall.
 
 ### Explanation Output Format:
 ```text
 "XAR selected PC1 -> R1 -> R3 -> R4 -> R5 -> PC2 because latency was 43.0 ms lower, 
-congestion was 70.0% lower, and expected packet loss was 15.9% lower. Although the 
+congestion was 70.0% lower, and expected packet loss was 16.0% lower. Although the 
 alternative had 1 fewer hop, its adaptive score was 0.43 vs 0.18 under the standard profile."
 ```
 

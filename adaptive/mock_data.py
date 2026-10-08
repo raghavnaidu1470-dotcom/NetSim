@@ -17,9 +17,9 @@ MOCK_ROUTE_RESULTS: Dict[str, Dict[str, Any]] = {
             "latency": 79.0,
             "status": "success",
             "congestion": 0.82,
-            "packet_loss": 0.19,
-            "reliability": 0.655,
-            "score": 0.684,
+            "packet_loss": 0.1917,
+            "reliability": 0.6547,
+            "score": 0.4329,
         },
         "distance_vector": {
             "path": ["PC1", "R1", "R2", "R5", "PC2"],
@@ -28,9 +28,9 @@ MOCK_ROUTE_RESULTS: Dict[str, Dict[str, Any]] = {
             "status": "success",
             "convergence_rounds": 5,
             "congestion": 0.82,
-            "packet_loss": 0.19,
-            "reliability": 0.655,
-            "score": 0.684,
+            "packet_loss": 0.1917,
+            "reliability": 0.6547,
+            "score": 0.4329,
         },
         "xar": {
             "path": ["PC1", "R1", "R3", "R4", "R5", "PC2"],
@@ -38,14 +38,14 @@ MOCK_ROUTE_RESULTS: Dict[str, Dict[str, Any]] = {
             "latency": 36.0,
             "status": "success",
             "congestion": 0.12,
-            "packet_loss": 0.029,
-            "reliability": 0.969,
-            "score": 0.288,
+            "packet_loss": 0.0316,
+            "reliability": 0.9684,
+            "score": 0.1801,
         },
         "explanation": (
             "XAR selected PC1 -> R1 -> R3 -> R4 -> R5 -> PC2 because latency was 43.0 ms lower, "
-            "congestion was 70.0% lower, and expected packet loss was 16.1% lower. Although the alternative "
-            "had 1 fewer hop, its adaptive score was 0.68 vs 0.29 under the Standard profile."
+            "congestion was 70.0% lower, and expected packet loss was 16.0% lower. Although the alternative "
+            "had 1 fewer hop, its adaptive score was 0.43 vs 0.18 under the Standard profile."
         ),
     },
     # Demo 2: Router failure
@@ -65,8 +65,8 @@ MOCK_ROUTE_RESULTS: Dict[str, Dict[str, Any]] = {
             "latency": 44.0,
             "status": "success",
             "congestion": 0.15,
-            "packet_loss": 0.025,
-            "reliability": 0.960,
+            "packet_loss": 0.0258,
+            "reliability": 0.9498,
         },
         "recovery_metrics": {
             "failed_node": "R2",
@@ -85,18 +85,18 @@ MOCK_ROUTE_RESULTS: Dict[str, Dict[str, Any]] = {
             "path": ["PC1", "R1", "R3", "R4", "PC2"],
             "hop_count": 4,
             "latency": 17.0,
-            "packet_loss": 0.145,
-            "reliability": 0.801,
-            "score": 0.231,
+            "packet_loss": 0.1461,
+            "reliability": 0.7994,
+            "score": 0.1458,
             "rationale": "Real-time profile prioritizes 17.0 ms latency over loss, selecting the fast path.",
         },
         "reliable_data_transfer": {
             "path": ["PC1", "R1", "R2", "R4", "PC2"],
             "hop_count": 4,
             "latency": 69.0,
-            "packet_loss": 0.003,
-            "reliability": 0.997,
-            "score": 0.185,
+            "packet_loss": 0.004,
+            "reliability": 0.996,
+            "score": 0.0826,
             "rationale": "Reliable profile heavily penalizes packet loss and unreliability, choosing the lossless path.",
         },
     },

@@ -10,19 +10,19 @@ This backlog tracks the foundational issues assigned to team members across the 
 - **Assignee**: Member 2 (Harish)
 - **Role**: `adaptive/metrics.py`
 - **Schedule Due**: Day 3
-- **Doc Link**: [`docs/member2_xar_simulation.md#2-files--exact-function-signatures`](docs/member2_xar_simulation.md#2-files--exact-function-signatures)
+- **Doc Link**: [`member2_xar_simulation.md#2-files--exact-function-signatures`](member2_xar_simulation.md#2-files--exact-function-signatures)
 - **Labels**: `member-2`, `phase-2`
 - **Acceptance Criteria**:
   - Implement `aggregate_path_metrics(topology, path)` returning latency, loss, reliability, bottleneck congestion, and hops.
   - Implement `normalize_metrics(raw)` applying `MAX_LATENCY_CEILING = 200.0` and `MAX_HOPS_CEILING = 10.0`.
-  - Implement `compute_path_score(norm, weights)` evaluating $Score = w_h H + w_l L + w_c C + w_p P + w_r (1-R)$.
+  - Implement `compute_path_score(norm, weights)` evaluating $\text{Score} = w_h \cdot H + w_l \cdot L + w_c \cdot C + w_p \cdot P + w_r \cdot (1-R)$.
   - Unskip and pass all tests in `tests/test_metrics.py`.
 
 ### Issue #2: [Member 2] Implement XAR Candidate Path Evaluation & Optimal Selection
 - **Assignee**: Member 2 (Harish)
 - **Role**: `adaptive/xar.py`
 - **Schedule Due**: Day 4
-- **Doc Link**: [`docs/member2_xar_simulation.md#2-files--exact-function-signatures`](docs/member2_xar_simulation.md#2-files--exact-function-signatures)
+- **Doc Link**: [`member2_xar_simulation.md#2-files--exact-function-signatures`](member2_xar_simulation.md#2-files--exact-function-signatures)
 - **Labels**: `member-2`, `phase-2`
 - **Acceptance Criteria**:
   - Implement `evaluate_all_candidate_paths(topology, src, dst, profile)` calling `topology.enumerate_paths()`.
@@ -32,10 +32,10 @@ This backlog tracks the foundational issues assigned to team members across the 
   - Unskip and pass tests in `tests/test_xar.py`.
 
 ### Issue #3: [Member 3] Wire Up Interactive Streamlit Visualizer with Live Route Highlighting
-- **Assignee**: Member 3 (Akhilesh)
+- **Assignee**: Member 3 (Akhilesh Reddy)
 - **Role**: `ui/app.py`, `ui/topology_view.py`
 - **Schedule Due**: Day 5
-- **Doc Link**: [`docs/member3_ui_analytics.md#2-streamlit-tab-by-tab-wireframes-ascii`](docs/member3_ui_analytics.md#2-streamlit-tab-by-tab-wireframes-ascii)
+- **Doc Link**: [`member3_ui_analytics.md#2-streamlit-tab-by-tab-wireframes-ascii`](member3_ui_analytics.md#2-streamlit-tab-by-tab-wireframes-ascii)
 - **Labels**: `member-3`, `phase-2`
 - **Acceptance Criteria**:
   - Connect UI dropdowns to dynamically invoke `topology.find_route()`.
@@ -50,7 +50,7 @@ This backlog tracks the foundational issues assigned to team members across the 
 - **Assignee**: Member 2 (Harish)
 - **Role**: `adaptive/explanation.py`
 - **Schedule Due**: Day 6
-- **Doc Link**: [`docs/member2_xar_simulation.md#3-worked-mathematical-example-on-why_shortest_is_not_bestjson`](docs/member2_xar_simulation.md#3-worked-mathematical-example-on-why_shortest_is_not_bestjson)
+- **Doc Link**: [`member2_xar_simulation.md#3-worked-mathematical-example-on-why_shortest_is_not_bestjson`](member2_xar_simulation.md#3-worked-mathematical-example-on-why_shortest_is_not_bestjson)
 - **Labels**: `member-2`, `phase-3`, `integration`
 - **Acceptance Criteria**:
   - Implement `compare_routes(topology, selected, alternative, profile)` calculating exact metric deltas.
@@ -58,10 +58,10 @@ This backlog tracks the foundational issues assigned to team members across the 
   - Unskip and pass `tests/test_explanation.py`.
 
 ### Issue #5: [Member 3] Connect Algorithm Comparison Dashboard & Explanation Panel
-- **Assignee**: Member 3 (Akhilesh)
+- **Assignee**: Member 3 (Akhilesh Reddy)
 - **Role**: `ui/dashboard.py`
 - **Schedule Due**: Day 7
-- **Doc Link**: [`docs/member3_ui_analytics.md#tab-4-algorithm-comparison-uidashboardpy`](docs/member3_ui_analytics.md#tab-4-algorithm-comparison-uidashboardpy)
+- **Doc Link**: [`member3_ui_analytics.md#tab-4-algorithm-comparison-uidashboardpy`](member3_ui_analytics.md#tab-4-algorithm-comparison-uidashboardpy)
 - **Labels**: `member-3`, `phase-3`, `integration`
 - **Acceptance Criteria**:
   - Populate Comparison tab with side-by-side metrics comparing Dijkstra, Distance Vector, and XAR.
@@ -75,7 +75,7 @@ This backlog tracks the foundational issues assigned to team members across the 
 - **Assignee**: Member 2 (Harish)
 - **Role**: `simulation/failures.py`, `simulation/congestion.py`
 - **Schedule Due**: Day 8
-- **Doc Link**: [`docs/member2_xar_simulation.md#2-files--exact-function-signatures`](docs/member2_xar_simulation.md#2-files--exact-function-signatures)
+- **Doc Link**: [`member2_xar_simulation.md#2-files--exact-function-signatures`](member2_xar_simulation.md#2-files--exact-function-signatures)
 - **Labels**: `member-2`, `phase-4`
 - **Acceptance Criteria**:
   - Implement `trigger_node_failure` and `trigger_link_failure`.
@@ -84,10 +84,10 @@ This backlog tracks the foundational issues assigned to team members across the 
   - Unskip and pass tests in `tests/test_failures.py` and `tests/test_congestion.py`.
 
 ### Issue #7: [Member 3] Interactive Network Disruption Controls in UI
-- **Assignee**: Member 3 (Akhilesh)
+- **Assignee**: Member 3 (Akhilesh Reddy)
 - **Role**: `ui/app.py`, `ui/packet_view.py`
 - **Schedule Due**: Day 9
-- **Doc Link**: [`docs/member3_ui_analytics.md#tab-3-network-disruption--recovery`](docs/member3_ui_analytics.md#tab-3-network-disruption--recovery)
+- **Doc Link**: [`member3_ui_analytics.md#tab-3-network-disruption--recovery`](member3_ui_analytics.md#tab-3-network-disruption--recovery)
 - **Labels**: `member-3`, `phase-4`
 - **Acceptance Criteria**:
   - Provide runtime failure toggles for routers.
@@ -99,10 +99,10 @@ This backlog tracks the foundational issues assigned to team members across the 
 ## Milestone 4: Protocol Demonstrations (Day 12)
 
 ### Issue #8: [Member 3] Implement Transport-Layer Demonstrations (TCP vs UDP)
-- **Assignee**: Member 3 (Akhilesh)
+- **Assignee**: Member 3 (Akhilesh Reddy)
 - **Role**: `protocols/tcp_udp.py`
 - **Schedule Due**: Day 12
-- **Doc Link**: [`docs/member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy`](docs/member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy)
+- **Doc Link**: [`member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy`](member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy)
 - **Labels**: `member-3`, `phase-6`
 - **Acceptance Criteria**:
   - Simulate TCP 3-way handshake and sliding window retransmissions.
@@ -110,10 +110,10 @@ This backlog tracks the foundational issues assigned to team members across the 
   - Unskip and pass `tests/test_tcp_udp.py`.
 
 ### Issue #9: [Member 3] Implement CRC Polynomial Error Detection Demonstration
-- **Assignee**: Member 3 (Akhilesh)
+- **Assignee**: Member 3 (Akhilesh Reddy)
 - **Role**: `protocols/crc.py`
 - **Schedule Due**: Day 12
-- **Doc Link**: [`docs/member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy`](docs/member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy)
+- **Doc Link**: [`member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy`](member3_ui_analytics.md#tab-5-protocol-lab-protocolstcp_udppy-protocolscrcpy)
 - **Labels**: `member-3`, `phase-6`
 - **Acceptance Criteria**:
   - Implement modulo-2 bitwise division for `compute_crc` and `verify_crc`.

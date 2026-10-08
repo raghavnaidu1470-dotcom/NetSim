@@ -1,4 +1,4 @@
-"""NetSim-X Network and Routing Engine package (Member 1).
+"""NetSim-X Network and Routing Engine package (Member 1 - Ragghav Kamaraj).
 
 Exposes Topology, Link, Node, Dijkstra Link State, Distance Vector, and routing tables.
 """

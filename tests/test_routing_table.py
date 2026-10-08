@@ -1,4 +1,4 @@
-"""Unit tests for routing table generation and failure updates (Member 1)."""
+"""Unit tests for routing table generation and failure updates (Member 1 - Ragghav Kamaraj)."""
 
 from network.devices import Link, Node
 from network.routing_table import RoutingTable, build_routing_table

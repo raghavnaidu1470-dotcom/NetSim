@@ -1,4 +1,4 @@
-"""Unit tests for round-by-round Distance Vector routing (Member 1)."""
+"""Unit tests for round-by-round Distance Vector routing (Member 1 - Ragghav Kamaraj)."""
 
 from network.devices import Link, Node
 from network.distance_vector import distance_vector_routing, simulate_distance_vector_convergence

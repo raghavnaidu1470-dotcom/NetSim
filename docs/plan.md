@@ -13,17 +13,17 @@ This schedule establishes clear deliverables, integration checkpoints, and edge-
 - [x] Create 3 reference demo topologies (`data/topologies/`).
 
 ### Phase 2: Core Implementation (Days 3–5)
-- **Member 1 (Network Engine)**:
+- **Member 1 (Ragghav Kamaraj - Network Engine)**:
   - Topology loading from JSON with IPv4 validation.
   - NetworkX graph generation and path enumeration (`enumerate_paths`).
   - Dijkstra / Link State shortest path engine.
   - Round-by-round Distance Vector with convergence round counter.
   - Routing table generation and update after node failure.
-- **Member 2 (Adaptive & Simulation)**:
+- **Member 2 (Harish - Adaptive & Simulation)**:
   - Implement metric aggregation and unit-interval normalization (`adaptive/metrics.py`).
   - Implement XAR candidate path evaluation and route selection (`adaptive/xar.py`).
   - Implement disruption handlers for router/link failures and congestion injection (`simulation/`).
-- **Member 3 (UI & Visualizer)**:
+- **Member 3 (Akhilesh Reddy - UI & Visualizer)**:
   - Build Streamlit foundation with sidebar parameter selectors (`ui/controls.py`).
   - Integrate NetworkX / Matplotlib graph rendering with path highlighting (`ui/topology_view.py`).
   - Set up session state for tick-based packet simulation.
