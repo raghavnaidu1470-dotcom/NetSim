@@ -41,14 +41,20 @@ network/
 ### Signature: `find_route`
 ```python
 def find_route(
-    self, source: str, destination: str, algorithm: str = "dijkstra"
+    topology: Topology,
+    source: str,
+    destination: str,
+    algorithm: str = "dijkstra",
+    metric: str = "hop",
 ) -> RouteResult:
     """Returns:
     {
         "path": ["PC1", "R1", "R2", "PC2"],
         "hop_count": 3,
         "latency": 22.0,
-        "status": "success" | "no_route" | "invalid"
+        "status": "success" | "no_route" | "invalid",
+        "message": "Descriptive route summary or error reason",
+        "algorithm": "dijkstra" | "distance_vector" | "xar"
     }
     """
 ```
@@ -56,18 +62,20 @@ def find_route(
 ### Signature: `enumerate_paths`
 ```python
 def enumerate_paths(
-    self, source: str, destination: str, max_hops: int = 8
+    topology: Topology, source: str, destination: str, max_hops: int = 8
 ) -> List[List[str]]:
-    """Returns list of candidate paths (e.g. [['PC1', 'R1', 'R2', 'PC2'], ...])"""
+    """Returns deterministic sorted list of candidate paths (e.g. [['PC1', 'R1', 'R2', 'PC2'], ...])"""
 ```
 
 ---
 
 ## 3. Definition of Done Checklist for Ragghav Kamaraj
 
-- [x] All demo topologies in `data/topologies/` pass validation.
-- [x] Invalid IPv4 strings rejected with clean `ValueError`.
-- [x] Dijkstra correctly finds shortest paths and handles disconnected topologies without crashing.
-- [x] Distance Vector simulation tracks convergence rounds and outputs populated next-hop tables.
-- [x] Routing tables successfully invalidate routes passing through failed nodes.
-- [x] All 30 unit tests pass cleanly with `pytest`.
+- [x] All demo topologies in `data/topologies/` pass validation and deterministic enumeration.
+- [x] Invalid IPv4 strings and duplicate IP assignments rejected with clean `ValueError`.
+- [x] Dijkstra supports hop and latency metrics with deterministic tie-breaking.
+- [x] Distance Vector simulation tracks convergence rounds, per-round logs, and failure reconvergence with configurable infinity.
+- [x] Routing tables successfully invalidate routes passing through failed nodes and links, with ASCII pretty-printing.
+- [x] Verified demo metrics script `scripts/verify_demos.py` implemented using strictly `network/*` code.
+- [x] All 44 unit tests pass cleanly with `pytest`.
+

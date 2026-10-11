@@ -4,12 +4,12 @@ This document tracks the current development status of all project components. *
 
 | Module Path | Owner | Origin | Current State | Next Action |
 | :--- | :--- | :--- | :---: | :--- |
-| `network/devices.py` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ✅ **Done** | Core schemas, models, and IPv4 validation complete (all tests pass). |
-| `network/topology.py` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ✅ **Done** | JSON loading, graph builder, path enumeration complete (all tests pass). |
-| `network/link_state.py` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ✅ **Done** | Dijkstra shortest path algorithm implemented and verified (all tests pass). |
-| `network/distance_vector.py` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ✅ **Done** | Round-by-round Bellman-Ford and convergence round counting complete (all tests pass). |
-| `network/routing_table.py` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ✅ **Done** | Routing table generation and failure invalidation complete (all tests pass). |
-| `data/topologies/*.json` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ✅ **Done** | 3 demo scenario topologies written, validated, and verified across engines. |
+| `network/devices.py` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ⏳ **Verified (Pending CI)** | Core schemas, models, and IPv4 validation complete (passes all 44 unit tests locally; pending remote CI run). |
+| `network/topology.py` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ⏳ **Verified (Pending CI)** | JSON load/save round trip, graph builder, path enumeration, duplicate IP checks complete (passes all 44 unit tests locally; pending remote CI run). |
+| `network/link_state.py` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ⏳ **Verified (Pending CI)** | Dijkstra shortest path algorithm with hop & latency metrics and deterministic tie-breaking complete (passes all 44 unit tests locally; pending remote CI run). |
+| `network/distance_vector.py` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ⏳ **Verified (Pending CI)** | Round-by-round Bellman-Ford, per-round logs, configurable infinity (16), and reconvergence complete (passes all 44 unit tests locally; pending remote CI run). |
+| `network/routing_table.py` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ⏳ **Verified (Pending CI)** | Routing table generation, failure invalidation (node & link), and ASCII pretty-printing complete (passes all 44 unit tests locally; pending remote CI run). |
+| `data/topologies/*.json` | Member 1 (Ragghav Kamaraj) | Member 1 (implemented) | ⏳ **Verified (Pending CI)** | 3 demo scenario topologies written, validated, and verified via `scripts/verify_demos.py` (passes all 44 unit tests locally; pending remote CI run). |
 | `adaptive/traffic_profiles.py` | Member 2 (Harish) | Scaffolded (AI) - owner to review and extend | 🛠️ **Scaffolded - pending owner review** | Owner to read, test, and either approve or modify profile definitions and weights. |
 | `adaptive/metrics.py` | Member 2 (Harish) | Stub | 🟡 **Stub** | Implement metric aggregation and unit normalization functions. |
 | `adaptive/xar.py` | Member 2 (Harish) | Stub | 🟡 **Stub** | Implement candidate path scoring and route selection. |
