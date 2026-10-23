@@ -236,6 +236,49 @@ The interactive **Algorithm Race Mode** evaluates Dijkstra, Distance Vector, and
 
 > **Important**: **XAR is not guaranteed to win every race.** In uncongested, uniform networks with zero packet loss, traditional Dijkstra or Distance Vector finds the mathematically optimal shortest path with lower computational complexity ($O(V \log V + E)$ vs $k$-path candidate enumeration). XAR is designed specifically to prevent severe degradation in real-world scenarios where shortest paths conceal heavy congestion, high packet drops, or poor link reliability.
 
+### XAR Engine Status & Reference Preview
+
+Member 2's `adaptive.xar` package is currently in progress. To enable full end-to-end integration and allow immediate benchmarking across all scenarios, the front end utilizes a decoupled adapter (`ui/xar_adapter.py`):
+- **Spec-Compliant Reference Preview**: If `adaptive.xar.xar_find_route` raises `NotImplementedError` or `ImportError`, the adapter enumerates simple candidate paths via Member 1's `enumerate_paths` and scores each candidate against the exact mathematical formula in `docs/spec.md` and `adaptive/traffic_profiles.py`.
+- **Visible Badge**: Fallback rows, KPI cards, and rationales are clearly tagged with the **`[Reference preview]`** badge (`XAR (reference preview, not Member 2's implementation)`).
+- **Zero-Rigging Guarantee**: Results are evaluated strictly from graph metrics without manipulation: if XAR ties or loses, it is displayed as is.
+- **Seamless Transition**: When Member 2 merges the live engine, the adapter automatically detects the real function, routes calls to it, and drops the badge without requiring any UI code changes.
+
+---
+
+## Running the Dashboard
+
+Launch the interactive dashboard locally:
+
+```bash
+streamlit run ui/app.py
+```
+
+The web application opens automatically in your browser (default `http://localhost:8501`) with five comprehensive tabs:
+
+1. **🗺️ Tab 1: Topology & Routing**:
+   - Interactive NetworkX & Matplotlib visualization with distinctive styling: Cyan square host nodes, Emerald green router nodes, and dashed red lines for inactive links.
+   - Dynamic path highlighting in gold showing the active route computed by the selected algorithm.
+   - Edge metric labels displaying latency (ms), packet loss (%), and bottleneck congestion (%).
+   - Full tabular inventory of device nodes and physical link parameters.
+2. **📦 Tab 2: Packet Simulation**:
+   - Hop-by-hop stepper moving packets through intermediate routers with cumulative latency tracking and an event log.
+   - Stochastic batch transmission of $N$ packets using route-aggregated packet loss rates with a reproducible random seed.
+   - Router forwarding table inspector displaying active next-hop pointers.
+   - Distance Vector convergence iterations log.
+3. **⚡ Tab 3: Network Disruption**:
+   - Interactive fault injection: crash/restore routers, cut/reconnect links, and adjust link metrics via sliders.
+   - Targeted one-click scenario to crash the critical intermediate router along the active route.
+   - Before-and-after failure rerouting impact analysis (path shift, hop delta, latency delta).
+   - Resilience calculation adhering to the formal recovery time formula: $T_{\mathrm{detect}} + (N_{\mathrm{rounds}} \times T_{\mathrm{round}})$.
+4. **⚖️ Tab 4: Algorithm Comparison (Race Mode)**:
+   - Evaluates Dijkstra (Hop Count), Dijkstra (Latency), Distance Vector, and XAR side-by-side across identical topologies.
+   - Multi-metric benchmark matrix and side-by-side bar charts (Latency, Congestion, Hops, Multi-Criteria Score).
+   - Explainable Decision Engine ("Why This Route?") detailing trade-offs.
+5. **🔬 Tab 5: Protocol Lab**:
+   - **Transport Layer**: Comparative simulation of TCP (3-way handshake, sliding window, timeouts, retransmissions, teardown) vs. UDP (zero-handshake connectionless datagram burst) with side-by-side event timeline tables. Defaults to the active path's packet loss rate.
+   - **Data Link Layer**: Modulo-2 polynomial division for CRC-4 (`10011`), CRC-8 (`100000111`), or custom generators with step-by-step XOR division trace, interactive single-bit error injection, and receiver syndrome verification.
+
 ---
 
 ## Quickstart & Local Setup
