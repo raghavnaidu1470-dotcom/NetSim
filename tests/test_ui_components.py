@@ -155,3 +155,25 @@ def test_streamlit_app_smoke_test_with_apptest() -> None:
             at.sidebar.selectbox[0].select(scenario_name)
             at.run()
             assert not at.exception, f"AppTest raised an unhandled exception on {scenario_name}: {at.exception}"
+
+    # Custom uploaded JSON scenario test
+    custom_data = {
+        "name": "custom_mesh",
+        "nodes": [
+            {"id": "PC1", "ip": "10.0.0.1", "type": "host", "active": True},
+            {"id": "R1", "ip": "10.0.0.2", "type": "router", "active": True},
+            {"id": "PC2", "ip": "10.0.0.3", "type": "host", "active": True},
+        ],
+        "links": [
+            {"source": "PC1", "destination": "R1", "latency": 5.0, "congestion": 0.1, "packet_loss": 0.01, "reliability": 0.99, "bandwidth": 100.0, "active": True},
+            {"source": "R1", "destination": "PC2", "latency": 10.0, "congestion": 0.1, "packet_loss": 0.01, "reliability": 0.99, "bandwidth": 100.0, "active": True},
+        ],
+    }
+    custom_topo = Topology.from_dict(custom_data)
+    at_custom = AppTest.from_file("ui/app.py", default_timeout=15)
+    at_custom.run()
+    at_custom.session_state["authoritative_topology"] = custom_topo
+    at_custom.session_state["original_baseline_topology"] = custom_topo
+    at_custom.session_state["selected_scenario_name"] = "custom_upload"
+    at_custom.run()
+    assert not at_custom.exception, f"AppTest raised an exception on custom upload: {at_custom.exception}"
