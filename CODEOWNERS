@@ -5,7 +5,7 @@
 # Global fallback
 * @member1-network @member2-adaptive @member3-ui
 
-# Member 1: Network & Routing Engine
+# Member 1 (Ragghav Kamaraj): Network & Routing Engine
 /network/ @member1-network
 /data/topologies/ @member1-network
 /tests/test_devices.py @member1-network
@@ -27,7 +27,7 @@
 /tests/test_packet_loss.py @member2-adaptive
 /docs/member2_xar_simulation.md @member2-adaptive
 
-# Member 3 (Akhilesh): User Interface, Dashboards, & Protocol Demos
+# Member 3 (Akhilesh Reddy): User Interface, Dashboards, & Protocol Demos
 /ui/ @member3-ui
 /protocols/ @member3-ui
 /tests/test_ui_components.py @member3-ui

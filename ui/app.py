@@ -1,26 +1,33 @@
 """Main Streamlit application entry point for NetSim-X (Member 3).
 
-Visualizes packet routing, XAR adaptive scoring, network disruptions,
-and multi-algorithm comparisons across interactive tabs.
+Interactive simulation and analytics platform evaluating Dijkstra, Distance Vector,
+and Explainable Adaptive Routing (XAR) across 5 functional tabs:
+1. Topology & Forwarding Path
+2. Step-by-Step Packet Simulation
+3. Network Disruption & Fault Recovery
+4. Multi-Algorithm Race Mode & Benchmark Matrix
+5. Transport & Data-Link Protocol Lab (TCP/UDP, CRC)
 """
 
 from __future__ import annotations
 
+import copy
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import streamlit as st
 
-from adaptive.mock_data import MOCK_ROUTE_RESULTS
 from network.topology import Topology
-from ui.controls import render_sidebar_controls
-from ui.dashboard import render_comparison_dashboard
-from ui.packet_view import render_packet_simulation_view
-from ui.topology_view import draw_topology_graph
+from ui.controls import render_disruption_tab, render_sidebar_controls
+from ui.dashboard import render_algorithm_comparison_tab
+from ui.packet_view import render_packet_simulation_tab
+from ui.protocol_lab import render_protocol_lab_tab
+from ui.topology_view import render_topology_view
+from ui.xar_adapter import resolve_xar_route
 
-# Setup page layout and branding
+# Setup page layout, title, and favicon
 st.set_page_config(
-    page_title="NetSim-X | Explainable Network Simulation",
+    page_title="NetSim-X | Explainable Adaptive Routing & Resilience",
     page_icon="🌐",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -31,83 +38,109 @@ TOPOLOGIES_DIR = Path(__file__).resolve().parent.parent / "data" / "topologies"
 
 def load_available_topologies() -> Dict[str, Path]:
     """Discover all JSON topology files in data/topologies/."""
+    if not TOPOLOGIES_DIR.is_dir():
+        return {}
     files = list(TOPOLOGIES_DIR.glob("*.json"))
     return {f.stem: f for f in sorted(files)}
 
 
-def get_or_create_topology(topo_path: Path) -> Topology:
-    """Load topology from disk into session state or cache."""
-    return Topology.load_json(topo_path)
+def get_topology_for_scenario(scenario_key: str, available_topologies: Dict[str, Path]) -> Topology:
+    """Load and return a clean Topology object for the requested scenario."""
+    if scenario_key in available_topologies:
+        return Topology.load_json(available_topologies[scenario_key])
+    elif available_topologies:
+        first_key = list(available_topologies.keys())[0]
+        return Topology.load_json(available_topologies[first_key])
+    return Topology("empty")
 
 
 def main() -> None:
     st.title("🌐 NetSim-X: Explainable Adaptive Routing & Resilience")
     st.caption(
-        "Interactive simulation framework evaluating Dijkstra, Distance Vector, and Explainable Adaptive Routing (XAR)."
+        "Interactive simulation framework evaluating Dijkstra, Distance Vector, "
+        "and Explainable Adaptive Routing (XAR) under multi-criteria objectives and network disruptions."
     )
 
-    # Initialize tick-based simulation state
-    if "sim_tick" not in st.session_state:
-        st.session_state["sim_tick"] = 0
-    if "failed_nodes" not in st.session_state:
-        st.session_state["failed_nodes"] = set()
-
-    topologies = load_available_topologies()
-    if not topologies:
-        st.error(f"No topology files found in {TOPOLOGIES_DIR}")
+    available_topos = load_available_topologies()
+    if not available_topos:
+        st.error(f"No scenario files found in `{TOPOLOGIES_DIR}`. Please verify project structure.")
         return
 
-    # Render sidebar controls
-    # Default topology
-    default_topo_name = "why_shortest_is_not_best" if "why_shortest_is_not_best" in topologies else list(topologies.keys())[0]
-    selected_topo_key = st.sidebar.selectbox(
-        "📂 Topology Scenario",
-        options=list(topologies.keys()),
-        index=list(topologies.keys()).index(default_topo_name),
+    # Initialize authoritative topology state in session_state
+    if "selected_scenario_name" not in st.session_state:
+        default_scenario = (
+            "why_shortest_is_not_best"
+            if "why_shortest_is_not_best" in available_topos
+            else list(available_topos.keys())[0]
+        )
+        st.session_state["selected_scenario_name"] = default_scenario
+        st.session_state["authoritative_topology"] = get_topology_for_scenario(default_scenario, available_topos)
+        st.session_state["original_baseline_topology"] = copy.deepcopy(st.session_state["authoritative_topology"])
+        st.session_state["sim_tick"] = 0
+        st.session_state["event_log"] = []
+
+    # Render Sidebar Controls
+    controls = render_sidebar_controls(
+        available_topologies=available_topos,
+        active_topology=st.session_state["authoritative_topology"],
     )
 
-    topo = get_or_create_topology(topologies[selected_topo_key])
+    # Handle Scenario Switching or Custom Upload
+    if controls["uploaded_topology"] is not None:
+        custom_topo = controls["uploaded_topology"]
+        if (
+            st.session_state.get("selected_scenario_name") != "custom_upload"
+            or st.session_state.get("custom_topo_name") != custom_topo.name
+        ):
+            st.session_state["selected_scenario_name"] = "custom_upload"
+            st.session_state["custom_topo_name"] = custom_topo.name
+            st.session_state["authoritative_topology"] = copy.deepcopy(custom_topo)
+            st.session_state["original_baseline_topology"] = copy.deepcopy(custom_topo)
+            st.session_state["sim_tick"] = 0
+            st.session_state["event_log"] = []
+            st.rerun()
 
-    # Node selection
-    node_ids = sorted(list(topo.nodes.keys()))
-    col_src, col_dst = st.sidebar.columns(2)
-    with col_src:
-        src = st.selectbox("Source", options=node_ids, index=0)
-    with col_dst:
-        dst = st.selectbox("Destination", options=node_ids, index=len(node_ids) - 1)
+    elif controls["selected_topology_name"] != "Upload Custom JSON":
+        new_scenario = controls["selected_topology_name"]
+        if new_scenario != st.session_state.get("selected_scenario_name"):
+            st.session_state["selected_scenario_name"] = new_scenario
+            st.session_state["authoritative_topology"] = get_topology_for_scenario(new_scenario, available_topos)
+            st.session_state["original_baseline_topology"] = copy.deepcopy(st.session_state["authoritative_topology"])
+            st.session_state["sim_tick"] = 0
+            st.session_state["event_log"] = []
+            st.rerun()
 
-    algorithm_label = st.sidebar.selectbox(
-        "Routing Protocol",
-        options=["Dijkstra (Link State)", "Distance Vector", "XAR (Explainable Adaptive)"],
-        index=0,
-    )
+    # Handle Reset Request
+    if controls["reset_requested"]:
+        st.session_state["authoritative_topology"] = copy.deepcopy(st.session_state["original_baseline_topology"])
+        st.session_state["sim_tick"] = 0
+        st.session_state["event_log"] = ["Topology restored to initial scenario baseline."]
+        st.rerun()
 
-    algo_map = {
-        "Dijkstra (Link State)": "dijkstra",
-        "Distance Vector": "distance_vector",
-        "XAR (Explainable Adaptive)": "xar",
-    }
-    algo_key = algo_map[algorithm_label]
+    authoritative_topo: Topology = st.session_state["authoritative_topology"]
+    src = controls["source"]
+    dst = controls["destination"]
+    algo = controls["algorithm"]
+    metric = controls["metric"]
+    profile = controls["traffic_profile"]
+    algo_label = controls["algorithm_label"]
 
-    profile_choice = st.sidebar.selectbox(
-        "XAR Traffic Profile",
-        options=["Standard", "Real-Time", "Reliable Data Transfer"],
-        index=0,
-    )
+    # Recompute active route on authoritative topology
+    if algo == "xar":
+        active_route_res, route_metrics, route_score, is_xar_fallback = resolve_xar_route(
+            authoritative_topo, src, dst, profile=profile
+        )
+    else:
+        active_route_res = authoritative_topo.find_route(src, dst, algorithm=algo, metric=metric)
+        if active_route_res.get("status") == "success" and active_route_res.get("path"):
+            route_metrics = authoritative_topo.get_path_metrics(active_route_res["path"])
+        else:
+            route_metrics = {}
 
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("💥 Disruption Toggles")
-    routers = [n for n, node in topo.nodes.items() if node.type == "router"]
-    fail_choice = st.sidebar.selectbox("Simulate Node Failure", options=["None"] + routers, index=0)
+    st.session_state["selected_route"] = active_route_res
+    active_path = active_route_res.get("path", [])
 
-    if fail_choice != "None":
-        topo.set_node_active(fail_choice, False)
-        st.sidebar.warning(f"⚠️ Router '{fail_choice}' is currently OFFLINE")
-
-    # Route resolution via Member 1's engine
-    route_res = topo.find_route(source=src, destination=dst, algorithm=algo_key)
-
-    # Tabs interface
+    # Five Functional Tabs Interface
     tabs = st.tabs([
         "🗺️ Topology & Routing",
         "📦 Packet Simulation",
@@ -116,158 +149,52 @@ def main() -> None:
         "🔬 Protocol Lab",
     ])
 
-    # TAB 1: Topology & Routing
+    # TAB 1: Topology
     with tabs[0]:
-        st.subheader("Network Graph & Active Forwarding Path")
-        path = route_res.get("path", [])
-        status = route_res.get("status", "unknown")
-
-        c_graph, c_info = st.columns([2, 1])
-
-        with c_graph:
-            fig = draw_topology_graph(
-                topo,
-                highlighted_path=path,
-                title=f"{selected_topo_key} ({algorithm_label})",
-            )
-            st.pyplot(fig)
-
-        with c_info:
-            st.markdown("### Route Metrics")
-            if status == "success":
-                st.success(f"**Status**: Route Active (`{len(path)}` nodes)")
-                st.markdown(f"**Path**: `{' ➔ '.join(path)}`")
-                st.metric("Hop Count", f"{route_res['hop_count']} hops")
-                st.metric("Accumulated Latency", f"{route_res['latency']} ms")
-
-                path_metrics = topo.get_path_metrics(path)
-                st.metric("Bottleneck Congestion", f"{int(path_metrics['congestion']*100)}%")
-                st.metric("Packet Loss Probability", f"{path_metrics['packet_loss']*100:.2f}%")
-                st.metric("Link Reliability", f"{path_metrics['reliability']*100:.2f}%")
-            else:
-                st.error(f"Routing Status: **{status.upper()}**")
-                st.info("No active path between selected endpoints due to topology disruption or invalid node.")
+        render_topology_view(
+            authoritative_topo,
+            highlighted_path=active_path,
+            title=f"{st.session_state['selected_scenario_name']} ({algo_label})",
+        )
 
     # TAB 2: Packet Simulation
     with tabs[1]:
-        st.subheader("Tick-Based Packet Flow")
-        c_tick, c_reset = st.columns(2)
-        with c_tick:
-            if st.button("⏩ Advance Tick (+10 pkts)"):
-                st.session_state["sim_tick"] += 1
-        with c_reset:
-            if st.button("🔄 Reset Simulation"):
-                st.session_state["sim_tick"] = 0
-
-        sim_pkts = 100 + (st.session_state["sim_tick"] * 10)
-        p_metrics = topo.get_path_metrics(path) if path else {"packet_loss": 0.0}
-        loss_p = p_metrics["packet_loss"]
-        dropped = int(sim_pkts * loss_p)
-        delivered = sim_pkts - dropped
-
-        sim_data = {
-            "packets_sent": sim_pkts,
-            "packets_delivered": delivered,
-            "packets_dropped": dropped,
-            "delivery_ratio": (delivered / sim_pkts) if sim_pkts > 0 else 1.0,
-        }
-        render_packet_simulation_view(path, sim_data)
-
-    # TAB 3: Network Disruption & Recovery
-    with tabs[2]:
-        st.subheader("Resilience & Recovery Time Analysis")
-        st.write(
-            "NetSim-X models resilience using the formal recovery time definition: "
-            "`Recovery Time = detection_delay + (recomputation_rounds * per_round_delay)`"
+        render_packet_simulation_tab(
+            authoritative_topo,
+            source=src,
+            destination=dst,
+            algorithm=algo,
+            metric=metric,
+            traffic_profile=profile,
         )
-        col_d1, col_d2, col_d3 = st.columns(3)
-        with col_d1:
-            det_delay = st.slider("Detection Delay (ms)", 50, 500, 150, 25)
-        with col_d2:
-            recomp_rounds = st.slider("Recomputation Rounds", 1, 10, 4, 1)
-        with col_d3:
-            round_delay = st.slider("Per-Round Delay (ms)", 10, 100, 50, 10)
 
-        total_rec_time = det_delay + (recomp_rounds * round_delay)
-        st.metric("Total Recovery Duration", f"{total_rec_time} ms")
-
-        if fail_choice != "None":
-            st.warning(f"Simulating network recovery after failure of **{fail_choice}**.")
-            st.info(f"Packets dropped during convergence window: ~{int(total_rec_time * 0.15)} packets.")
+    # TAB 3: Network Disruption
+    with tabs[2]:
+        render_disruption_tab(
+            authoritative_topo,
+            source=src,
+            destination=dst,
+            algorithm=algo,
+            metric=metric,
+            traffic_profile=profile,
+            original_topology=st.session_state.get("original_baseline_topology"),
+        )
 
     # TAB 4: Algorithm Comparison
     with tabs[3]:
-        st.subheader("Dijkstra vs Distance Vector vs XAR")
-        mock = MOCK_ROUTE_RESULTS.get("why_shortest_is_not_best", {})
-        comp_rows = [
-            {
-                "Algorithm": "Dijkstra (Hop Count)",
-                "Path": " -> ".join(mock["dijkstra"]["path"]),
-                "Hop Count": mock["dijkstra"]["hop_count"],
-                "Latency (ms)": mock["dijkstra"]["latency"],
-                "Packet Loss": f"{mock['dijkstra']['packet_loss']*100:.1f}%",
-                "Bottleneck Congestion": f"{int(mock['dijkstra']['congestion']*100)}%",
-                "Adaptive Score": mock["dijkstra"]["score"],
-            },
-            {
-                "Algorithm": "Distance Vector (Rounds: 5)",
-                "Path": " -> ".join(mock["distance_vector"]["path"]),
-                "Hop Count": mock["distance_vector"]["hop_count"],
-                "Latency (ms)": mock["distance_vector"]["latency"],
-                "Packet Loss": f"{mock['distance_vector']['packet_loss']*100:.1f}%",
-                "Bottleneck Congestion": f"{int(mock['distance_vector']['congestion']*100)}%",
-                "Adaptive Score": mock["distance_vector"]["score"],
-            },
-            {
-                "Algorithm": "XAR (Explainable Adaptive)",
-                "Path": " -> ".join(mock["xar"]["path"]),
-                "Hop Count": mock["xar"]["hop_count"],
-                "Latency (ms)": mock["xar"]["latency"],
-                "Packet Loss": f"{mock['xar']['packet_loss']*100:.1f}%",
-                "Bottleneck Congestion": f"{int(mock['xar']['congestion']*100)}%",
-                "Adaptive Score": mock["xar"]["score"],
-            },
-        ]
-        render_comparison_dashboard(comp_rows)
-
-        st.markdown("### 💡 Explainable Decision Engine (XAR Rationale)")
-        st.info(mock.get("explanation", "XAR rationale justification engine."))
+        render_algorithm_comparison_tab(
+            authoritative_topo,
+            source=src,
+            destination=dst,
+            traffic_profile=profile,
+        )
 
     # TAB 5: Protocol Lab
     with tabs[4]:
-        st.subheader("Transport Layer & Data Integrity Demonstrations")
-        sub_p1, sub_p2 = st.tabs(["TCP vs UDP Demo", "CRC Error Detection"])
-
-        with sub_p1:
-            st.markdown("#### TCP Sliding Window vs UDP Datagram Burst")
-            p_bytes = st.slider("Payload Size (KB)", 1, 50, 10)
-            p_loss = st.slider("Simulated Packet Loss Rate", 0.0, 0.20, 0.05, 0.01)
-            c_tcp, c_udp = st.columns(2)
-            with c_tcp:
-                st.markdown("**TCP (Reliable, Connection-Oriented)**")
-                st.write("- 3-Way Handshake: SYN -> SYN-ACK -> ACK (1.5 RTT delay)")
-                st.write(f"- Segments Sent: {p_bytes + int(p_bytes * p_loss * 1.5)}")
-                st.write(f"- Retransmissions on Loss: {int(p_bytes * p_loss)}")
-                st.success("Delivery: 100% Guaranteed")
-            with c_udp:
-                st.markdown("**UDP (Unreliable, Fire-and-Forget)**")
-                st.write("- Handshake: None (0 RTT startup)")
-                st.write(f"- Datagrams Sent: {p_bytes}")
-                st.write(f"- Dropped Datagrams: {int(p_bytes * p_loss)}")
-                st.warning(f"Delivery: {100 - int(p_loss * 100)}% (Unrecovered)")
-
-        with sub_p2:
-            st.markdown("#### Cyclic Redundancy Check (CRC) Polynomial Division")
-            bits = st.text_input("Data Bitstring", value="1101011011")
-            poly = st.text_input("Generator Polynomial", value="10011")
-            st.write(f"Transmitting bitstream with CRC-4 divisor `{poly}`.")
-            st.code(
-                f"Data: {bits}\n"
-                f"Appended Zeros: {bits + '0000'}\n"
-                f"Calculated Remainder (CRC Checksum): 1110\n"
-                f"Transmitted Frame: {bits + '1110'}\n"
-                f"Receiver Syndrome Verification: Remainder = 0000 (VALID FRAME, NO ERROR)"
-            )
+        render_protocol_lab_tab(
+            authoritative_topo,
+            active_path=active_path,
+        )
 
 
 if __name__ == "__main__":

@@ -1,12 +1,12 @@
 # Member 1 Handbook: Network & Routing Engine
 
-**Owner**: Member 1  
+**Owner**: Ragghav Kamaraj (Member 1)  
 **Packages Owned**: `network/`, `data/topologies/`, and associated `tests/` (`test_devices.py`, `test_topology.py`, `test_link_state.py`, `test_distance_vector.py`, `test_routing_table.py`).
 
 ---
 
 ## 1. Overview & Responsibilities
-Member 1 provides the mathematical graph substrate and traditional routing baseline for NetSim-X.
+Ragghav Kamaraj provides the mathematical graph substrate and traditional routing baseline for NetSim-X.
 All other team members depend on Member 1's topology abstractions and routing interfaces.
 
 ### Key Deliverables
@@ -17,7 +17,7 @@ All other team members depend on Member 1's topology abstractions and routing in
    - Convert network topologies into `networkx.Graph` instances filtering out inactive entities.
    - Enumerate all simple loop-free paths up to a hop cutoff via `enumerate_paths(src, dst, max_hops)`.
 3. **Traditional Routing Engines**:
-   - **Link State / Dijkstra**: Shortest path computation based on hop count or latency.
+   - **Link State / Dijkstra**: Shortest path computation based on hop count or latency. In demo scenarios such as `why_shortest_is_not_best.json`, we explicitly specify **Dijkstra (hop-count metric)** to showcase the classic shortest-path pitfall (selecting a heavily congested 4-hop path over an uncongested 5-hop path). With a latency metric, Dijkstra would also pick the better 36.0 ms route; using hop count demonstrates why unweighted shortest-path routing fails in real-world congested networks.
    - **Distance Vector**: Iterative round-by-round Bellman-Ford simulation with convergence round counting and routing table updates.
 4. **Router Forwarding Tables**:
    - `RoutingTable` structures and dynamic invalidation when next-hop routers crash.
@@ -41,14 +41,20 @@ network/
 ### Signature: `find_route`
 ```python
 def find_route(
-    self, source: str, destination: str, algorithm: str = "dijkstra"
+    topology: Topology,
+    source: str,
+    destination: str,
+    algorithm: str = "dijkstra",
+    metric: str = "hop",
 ) -> RouteResult:
     """Returns:
     {
         "path": ["PC1", "R1", "R2", "PC2"],
         "hop_count": 3,
         "latency": 22.0,
-        "status": "success" | "no_route" | "invalid"
+        "status": "success" | "no_route" | "invalid",
+        "message": "Descriptive route summary or error reason",
+        "algorithm": "dijkstra" | "distance_vector" | "xar"
     }
     """
 ```
@@ -56,18 +62,20 @@ def find_route(
 ### Signature: `enumerate_paths`
 ```python
 def enumerate_paths(
-    self, source: str, destination: str, max_hops: int = 8
+    topology: Topology, source: str, destination: str, max_hops: int = 8
 ) -> List[List[str]]:
-    """Returns list of candidate paths (e.g. [['PC1', 'R1', 'R2', 'PC2'], ...])"""
+    """Returns deterministic sorted list of candidate paths (e.g. [['PC1', 'R1', 'R2', 'PC2'], ...])"""
 ```
 
 ---
 
-## 3. Definition of Done Checklist for Member 1
+## 3. Definition of Done Checklist for Ragghav Kamaraj
 
-- [x] All demo topologies in `data/topologies/` pass validation.
-- [x] Invalid IPv4 strings rejected with clean `ValueError`.
-- [x] Dijkstra correctly finds shortest paths and handles disconnected topologies without crashing.
-- [x] Distance Vector simulation tracks convergence rounds and outputs populated next-hop tables.
-- [x] Routing tables successfully invalidate routes passing through failed nodes.
-- [x] All 30 unit tests pass cleanly with `pytest`.
+- [x] All demo topologies in `data/topologies/` pass validation and deterministic enumeration.
+- [x] Invalid IPv4 strings and duplicate IP assignments rejected with clean `ValueError`.
+- [x] Dijkstra supports hop and latency metrics with deterministic tie-breaking.
+- [x] Distance Vector simulation tracks convergence rounds, per-round logs, and failure reconvergence with configurable infinity.
+- [x] Routing tables successfully invalidate routes passing through failed nodes and links, with ASCII pretty-printing.
+- [x] Verified demo metrics script `scripts/verify_demos.py` implemented using strictly `network/*` code.
+- [x] All 44 unit tests pass cleanly with `pytest`.
+
