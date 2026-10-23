@@ -146,8 +146,10 @@ def test_streamlit_app_smoke_test_with_apptest() -> None:
         "traffic_profile_change",
     ]
 
+    app_file = str(Path(__file__).resolve().parent.parent / "ui" / "app.py")
+
     for scenario_name in demo_scenarios:
-        at = AppTest.from_file("ui/app.py", default_timeout=15)
+        at = AppTest.from_file(app_file, default_timeout=15)
         at.run()
         assert not at.exception, f"AppTest raised an unhandled exception on initial run: {at.exception}"
         # Select scenario in sidebar and rerun
@@ -170,7 +172,7 @@ def test_streamlit_app_smoke_test_with_apptest() -> None:
         ],
     }
     custom_topo = Topology.from_dict(custom_data)
-    at_custom = AppTest.from_file("ui/app.py", default_timeout=15)
+    at_custom = AppTest.from_file(app_file, default_timeout=15)
     at_custom.run()
     at_custom.session_state["authoritative_topology"] = custom_topo
     at_custom.session_state["original_baseline_topology"] = custom_topo
