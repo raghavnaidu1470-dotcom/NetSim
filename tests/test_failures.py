@@ -17,7 +17,6 @@ def test_calculate_recovery_time_formula() -> None:
     assert rec_time == 350.0
 
 
-@pytest.mark.skip(reason="Member 2 to implement trigger_node_failure")
 def test_trigger_node_failure_rerouting(linear_topology: Topology) -> None:
     metrics = trigger_node_failure(
         linear_topology,

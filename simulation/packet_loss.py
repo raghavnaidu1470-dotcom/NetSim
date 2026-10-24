@@ -42,13 +42,37 @@ def simulate_packet_transmission(
 
     Returns:
         PacketSimulationResult containing delivery, loss, and retransmission stats.
-
-    Raises:
-        NotImplementedError: If not yet implemented by Member 2.
     """
-    # TODO(Member 2 - Step 1): Get path loss probability via topology.get_path_metrics(path)['packet_loss'].
-    # TODO(Member 2 - Step 2): Seed random generator.
-    # TODO(Member 2 - Step 3): For each packet, simulate success/drop across each link hop.
-    # TODO(Member 2 - Step 4): Calculate retransmissions if transport is reliable (TCP-style).
-    # TODO(Member 2 - Step 5): Return populated PacketSimulationResult.
-    raise NotImplementedError("Member 2 to implement simulate_packet_transmission in simulation/packet_loss.py")
+    if num_packets < 0:
+        raise ValueError("num_packets must be non-negative")
+    if num_packets == 0:
+        return {"packets_sent": 0, "packets_delivered": 0, "packets_dropped": 0, "retransmissions": 0, "effective_throughput_mbps": 0.0, "delivery_ratio": 1.0}
+    if not path:
+        return {"packets_sent": num_packets, "packets_delivered": 0, "packets_dropped": num_packets, "retransmissions": 0, "effective_throughput_mbps": 0.0, "delivery_ratio": 0.0}
+    if len(path) == 1:  # source == destination: nothing crosses a link
+        return {"packets_sent": num_packets, "packets_delivered": num_packets, "packets_dropped": 0, "retransmissions": 0, "effective_throughput_mbps": 0.0, "delivery_ratio": 1.0}
+
+    rng = random.Random(seed)
+    link_losses: List[float] = []
+    usable_bandwidth = float("inf")
+    for u, v in zip(path, path[1:]):
+        link = topology.get_link(u, v)
+        if link is None:
+            raise ValueError(f"No link found between {u} and {v}")
+        link_losses.append(link.packet_loss)
+        usable_bandwidth = min(usable_bandwidth, link.bandwidth * (1.0 - link.congestion))  # congestion eats bandwidth
+
+    delivered = 0
+    for _ in range(num_packets):
+        if all(rng.random() >= p for p in link_losses):  # the packet must survive every hop
+            delivered += 1
+    dropped = num_packets - delivered
+    ratio = delivered / num_packets
+    return {
+        "packets_sent": num_packets,
+        "packets_delivered": delivered,
+        "packets_dropped": dropped,
+        "retransmissions": dropped,  # a TCP-style sender resends each lost packet at least once
+        "effective_throughput_mbps": round(max(0.0, usable_bandwidth) * ratio, 2),
+        "delivery_ratio": round(ratio, 4),
+    }
