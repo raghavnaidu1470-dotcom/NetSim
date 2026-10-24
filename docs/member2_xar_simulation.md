@@ -145,11 +145,11 @@ dijkstra_res = topology.find_route("PC1", "PC2", algorithm="dijkstra")
 
 ## 5. Definition of Done Checklist for Harish
 
-- [ ] Unskip and pass tests in `tests/test_metrics.py`.
-- [ ] Unskip and pass tests in `tests/test_xar.py`.
-- [ ] Unskip and pass tests in `tests/test_explanation.py`.
-- [ ] Unskip and pass tests in `tests/test_failures.py`.
-- [ ] Unskip and pass tests in `tests/test_congestion.py`.
-- [ ] Unskip and pass tests in `tests/test_packet_loss.py`.
-- [ ] Verify that XAR does not artificially win every race; verify edge cases where routes tie.
-- [ ] Update `STATUS.md` after each pull request.
+- [x] Unskip and pass tests in `tests/test_metrics.py`.
+- [x] Unskip and pass tests in `tests/test_xar.py`.
+- [x] Unskip and pass tests in `tests/test_explanation.py`.
+- [x] Unskip and pass tests in `tests/test_failures.py`.
+- [x] Unskip and pass tests in `tests/test_congestion.py`.
+- [x] Unskip and pass tests in `tests/test_packet_loss.py`.
+- [x] Verify that XAR does not artificially win every race; verify edge cases where routes tie.
+- [x] Update `STATUS.md` after each pull request.

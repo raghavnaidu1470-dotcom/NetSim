@@ -10,28 +10,28 @@ This backlog tracks the foundational issues assigned to team members across the 
 - **Assignee**: Member 2 (Harish)
 - **Role**: `adaptive/metrics.py`
 - **Schedule Due**: Day 3
-- **Status**: 🟡 Open / In Progress (Member 2 stub)
+- **Status**: 🟢 **Completed & Verified**
 - **Doc Link**: [`member2_xar_simulation.md#2-files--exact-function-signatures`](member2_xar_simulation.md#2-files--exact-function-signatures)
 - **Labels**: `member-2`, `phase-2`
 - **Acceptance Criteria**:
-  - Implement `aggregate_path_metrics(topology, path)` returning latency, loss, reliability, bottleneck congestion, and hops.
-  - Implement `normalize_metrics(raw)` applying `MAX_LATENCY_CEILING = 200.0` and `MAX_HOPS_CEILING = 10.0`.
-  - Implement `compute_path_score(norm, weights)` evaluating $\text{Score} = w_h \cdot H + w_l \cdot L + w_c \cdot C + w_p \cdot P + w_r \cdot (1-R)$.
-  - Unskip and pass all tests in `tests/test_metrics.py`.
+  - [x] Implement `aggregate_path_metrics(topology, path)` returning latency, loss, reliability, bottleneck congestion, and hops.
+  - [x] Implement `normalize_metrics(raw)` applying `MAX_LATENCY_CEILING = 200.0` and `MAX_HOPS_CEILING = 10.0`.
+  - [x] Implement `compute_path_score(norm, weights)` evaluating $\text{Score} = w_h \cdot H + w_l \cdot L + w_c \cdot C + w_p \cdot P + w_r \cdot (1-R)$.
+  - [x] Unskip and pass all tests in `tests/test_metrics.py`.
 
 ### Issue #2: [Member 2] Implement XAR Candidate Path Evaluation & Optimal Selection
 - **Assignee**: Member 2 (Harish)
 - **Role**: `adaptive/xar.py`
 - **Schedule Due**: Day 4
-- **Status**: 🟡 Open / In Progress (Member 2 stub)
+- **Status**: 🟢 **Completed & Verified**
 - **Doc Link**: [`member2_xar_simulation.md#2-files--exact-function-signatures`](member2_xar_simulation.md#2-files--exact-function-signatures)
 - **Labels**: `member-2`, `phase-2`
 - **Acceptance Criteria**:
-  - Implement `evaluate_all_candidate_paths(topology, src, dst, profile)` calling `topology.enumerate_paths()`.
-  - Sort paths ascending by XAR score.
-  - Implement `xar_find_route(topology, src, dst, profile)` returning `RouteResult`.
-  - Verify that on `why_shortest_is_not_best.json`, XAR selects the 5-hop path over the 4-hop path.
-  - Unskip and pass tests in `tests/test_xar.py`.
+  - [x] Implement `evaluate_all_candidate_paths(topology, src, dst, profile)` calling `topology.enumerate_paths()`.
+  - [x] Sort paths ascending by XAR score.
+  - [x] Implement `xar_find_route(topology, src, dst, profile)` returning `RouteResult`.
+  - [x] Verify that on `why_shortest_is_not_best.json`, XAR selects the 5-hop path over the 4-hop path.
+  - [x] Unskip and pass tests in `tests/test_xar.py`.
 
 ### Issue #3: [Member 3] Wire Up Interactive Streamlit Visualizer with Live Route Highlighting
 - **Assignee**: Member 3 (Akhilesh Reddy) — *Implemented by Ragghav Kamaraj covering Member 3*
@@ -54,13 +54,13 @@ This backlog tracks the foundational issues assigned to team members across the 
 - **Assignee**: Member 2 (Harish)
 - **Role**: `adaptive/explanation.py`
 - **Schedule Due**: Day 6
-- **Status**: 🟡 Open / In Progress (Member 2 stub)
+- **Status**: 🟢 **Completed & Verified**
 - **Doc Link**: [`member2_xar_simulation.md#3-worked-mathematical-example-on-why_shortest_is_not_bestjson`](member2_xar_simulation.md#3-worked-mathematical-example-on-why_shortest_is_not_bestjson)
 - **Labels**: `member-2`, `phase-3`, `integration`
 - **Acceptance Criteria**:
-  - Implement `compare_routes(topology, selected, alternative, profile)` calculating exact metric deltas.
-  - Format natural-language explanation comparing selected route against shortest path.
-  - Unskip and pass `tests/test_explanation.py`.
+  - [x] Implement `compare_routes(topology, selected, alternative, profile)` calculating exact metric deltas.
+  - [x] Format natural-language explanation comparing selected route against shortest path.
+  - [x] Unskip and pass `tests/test_explanation.py`.
 
 ### Issue #5: [Member 3] Connect Algorithm Comparison Dashboard & Explanation Panel
 - **Assignee**: Member 3 (Akhilesh Reddy) — *Implemented by Ragghav Kamaraj covering Member 3*
@@ -83,14 +83,14 @@ This backlog tracks the foundational issues assigned to team members across the 
 - **Assignee**: Member 2 (Harish)
 - **Role**: `simulation/failures.py`, `simulation/congestion.py`
 - **Schedule Due**: Day 8
-- **Status**: 🟡 Open / In Progress (Member 2 stub)
+- **Status**: 🟢 **Completed & Verified**
 - **Doc Link**: [`member2_xar_simulation.md#2-files--exact-function-signatures`](member2_xar_simulation.md#2-files--exact-function-signatures)
 - **Labels**: `member-2`, `phase-4`
 - **Acceptance Criteria**:
-  - Implement `trigger_node_failure` and `trigger_link_failure`.
-  - Calculate recovery time using $T_{\text{detect}} + (N_{\text{rounds}} \times T_{\text{round}})$.
-  - Implement `set_link_congestion` and `apply_burst_congestion`.
-  - Unskip and pass tests in `tests/test_failures.py` and `tests/test_congestion.py`.
+  - [x] Implement `trigger_node_failure` and `trigger_link_failure`.
+  - [x] Calculate recovery time using $T_{\text{detect}} + (N_{\text{rounds}} \times T_{\text{round}})$.
+  - [x] Implement `set_link_congestion` and `apply_burst_congestion`.
+  - [x] Unskip and pass tests in `tests/test_failures.py` and `tests/test_congestion.py`.
 
 ### Issue #7: [Member 3] Interactive Network Disruption Controls in UI
 - **Assignee**: Member 3 (Akhilesh Reddy) — *Implemented by Ragghav Kamaraj covering Member 3*

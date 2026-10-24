@@ -208,17 +208,17 @@ All demo topologies reside in `data/topologies/` and can be verified using `pyth
    - Demonstrates why unweighted minimum hop count is often suboptimal in congested networks.
    - **Dijkstra (hop-count metric)**: Picks the 4-hop congested path (`PC1 -> R1 -> R2 -> R5 -> PC2`, 79.0 ms latency, 82.0% congestion, 19.17% packet loss, 65.47% reliability).
    - **Dijkstra (latency metric)**: Picks the clean 5-hop path (`PC1 -> R1 -> R3 -> R4 -> R5 -> PC2`, 36.0 ms latency, 12.0% congestion, 3.16% packet loss, 96.84% reliability).
-   - *Reference values from the specification (to be reproduced by Member 2's implementation)*: Under the Standard profile ($w_h=0.20, w_l=0.25, w_c=0.20, w_p=0.20, w_r=0.15$), the specification defines an adaptive score of $0.1801$ for the 5-hop path vs $0.4329$ for the 4-hop path.
+   - *Reference values from the specification (reproduced by `tests/test_member2_verification.py`)*: Under the Standard profile ($w_h=0.20, w_l=0.25, w_c=0.20, w_p=0.20, w_r=0.15$), the specification defines an adaptive score of $0.1801$ for the 5-hop path vs $0.4329$ for the 4-hop path.
 2. **`router_failure.json`**:
    - Demonstrates runtime router disruption and dynamic path recovery.
    - **Pre-failure route**: Traffic flows across intermediate router `R2` along `PC1 -> R1 -> R2 -> PC2` (3 hops, 14.0 ms latency, 10.0% congestion, 0.70% packet loss, 98.80% reliability).
    - **Post-failure route**: Failing `R2` triggers dynamic recovery, re-routing over backup path `PC1 -> R1 -> R3 -> R4 -> PC2` (4 hops, 44.0 ms latency, 15.0% congestion, 2.58% packet loss, 94.98% reliability).
-   - *Reference values from the specification (to be reproduced by Member 2's implementation)*: Under the theoretical resilience model ($T_{\mathrm{detect}} = 150\text{ ms}$, $N_{\mathrm{rounds}} = 4$, $T_{\mathrm{round}} = 50\text{ ms}$), the specification defines an expected recovery time of $350.0\text{ ms}$.
+   - *Reference values from the specification (reproduced by `tests/test_member2_verification.py`)*: Under the theoretical resilience model ($T_{\mathrm{detect}} = 150\text{ ms}$, $N_{\mathrm{rounds}} = 4$, $T_{\mathrm{round}} = 50\text{ ms}$), the specification defines an expected recovery time of $350.0\text{ ms}$.
 3. **`traffic_profile_change.json`**:
    - Demonstrates candidate path characteristics between two alternative 4-hop paths (`PC1 -> R1 -> R3 -> R4 -> PC2` vs `PC1 -> R1 -> R2 -> R4 -> PC2`).
    - **Candidate A (Low Latency / Dijkstra latency metric choice)**: `PC1 -> R1 -> R3 -> R4 -> PC2` (4 hops, 17.0 ms latency, 14.0% congestion, 14.61% packet loss, 79.94% reliability).
    - **Candidate B (High Reliability / Dijkstra hop metric choice)**: `PC1 -> R1 -> R2 -> R4 -> PC2` (4 hops, 69.0 ms latency, 8.0% congestion, 0.40% packet loss, 99.60% reliability).
-   - *Reference values from the specification (to be reproduced by Member 2's implementation)*: Under profile weighting, Candidate A achieves score $0.1458$ vs $0.2085$ under Real-Time traffic, whereas Candidate B achieves score $0.0826$ vs $0.1654$ under Reliable Data Transfer.
+   - *Reference values from the specification (reproduced by `tests/test_member2_verification.py`)*: Under profile weighting, Candidate A achieves score $0.1458$ vs $0.2085$ under Real-Time traffic, whereas Candidate B achieves score $0.0826$ vs $0.1654$ under Reliable Data Transfer.
 
 ---
 
@@ -238,11 +238,10 @@ The interactive **Algorithm Race Mode** evaluates Dijkstra, Distance Vector, and
 
 ### XAR Engine Status & Reference Preview
 
-Member 2's `adaptive.xar` package is currently in progress. To enable full end-to-end integration and allow immediate benchmarking across all scenarios, the front end utilizes a decoupled adapter (`ui/xar_adapter.py`):
-- **Spec-Compliant Reference Preview**: If `adaptive.xar.xar_find_route` raises `NotImplementedError` or `ImportError`, the adapter enumerates simple candidate paths via Member 1's `enumerate_paths` and scores each candidate against the exact mathematical formula in `docs/spec.md` and `adaptive/traffic_profiles.py`.
-- **Visible Badge**: Fallback rows, KPI cards, and rationales are clearly tagged with the **`[Reference preview]`** badge (`XAR (reference preview, not Member 2's implementation)`).
-- **Zero-Rigging Guarantee**: Results are evaluated strictly from graph metrics without manipulation: if XAR ties or loses, it is displayed as is.
-- **Seamless Transition**: When Member 2 merges the live engine, the adapter automatically detects the real function, routes calls to it, and drops the badge without requiring any UI code changes.
+Member 2's `adaptive` and `simulation` packages are implemented and verified (`tests/test_member2_verification.py`). The front end still reaches XAR through a decoupled adapter (`ui/xar_adapter.py`) so the dashboard degrades gracefully:
+- **Live Engine**: The adapter calls `adaptive.xar.xar_find_route` and `adaptive.explanation.compare_routes` and shows their results without any badge.
+- **Spec-Compliant Reference Preview (safety net)**: Only if the engine raises `NotImplementedError` or `ImportError`, the adapter enumerates simple candidate paths via `enumerate_paths` and scores each against the formula in `docs/spec.md`, tagging the output with the **`[Reference preview]`** badge (`XAR (reference preview, not Member 2's implementation)`).
+- **Zero-Rigging Guarantee**: Results are evaluated strictly from graph metrics without manipulation: if XAR ties or loses (for example in `router_failure.json`, where every algorithm agrees), it is displayed as is.
 
 ---
 
