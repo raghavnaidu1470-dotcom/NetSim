@@ -56,8 +56,8 @@ def test_dv_equals_dijkstra_latency_static_network() -> None:
                     assert dijkstra_res["hop_count"] == dv_res["route"]["hop_count"]
 
 
-def test_find_route_schema_and_xar_stub() -> None:
-    """Item 3a: find_route schema and clear XAR not implemented message."""
+def test_find_route_schema_and_xar_delegation() -> None:
+    """Item 3a: find_route schema for every algorithm, including XAR."""
     topo = Topology.load_json(TOPOLOGY_DIR / "why_shortest_is_not_best.json")
 
     # Dijkstra
@@ -74,7 +74,24 @@ def test_find_route_schema_and_xar_stub() -> None:
     assert "message" in res_dv and res_dv["message"]
     assert res_dv["hop_count"] == 4
 
-    # XAR stub delegation
+    # XAR delegation to adaptive.xar (the 5-hop clean route wins under the standard profile)
+    res_xar = find_route(topo, "PC1", "PC2", algorithm="xar")
+    assert res_xar["status"] == "success"
+    assert res_xar["algorithm"] == "xar"
+    assert "message" in res_xar and res_xar["message"]
+    assert res_xar["path"] == ["PC1", "R1", "R3", "R4", "R5", "PC2"]
+    assert res_xar["hop_count"] == 5
+
+
+def test_find_route_xar_engine_unavailable_message(monkeypatch) -> None:
+    """If the adaptive engine is unavailable, find_route reports it cleanly instead of crashing."""
+    import adaptive.xar
+
+    def unavailable(*args, **kwargs):
+        raise NotImplementedError("engine not available")
+
+    monkeypatch.setattr(adaptive.xar, "xar_find_route", unavailable)
+    topo = Topology.load_json(TOPOLOGY_DIR / "why_shortest_is_not_best.json")
     res_xar = find_route(topo, "PC1", "PC2", algorithm="xar")
     assert res_xar["status"] == "invalid"
     assert res_xar["algorithm"] == "xar"

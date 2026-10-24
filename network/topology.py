@@ -277,7 +277,12 @@ class Topology:
         }
 
     def find_route(
-        self, source: str, destination: str, algorithm: str = "dijkstra", metric: str = "hop"
+        self,
+        source: str,
+        destination: str,
+        algorithm: str = "dijkstra",
+        metric: str = "hop",
+        profile: str = "standard",
     ) -> RouteResult:
         """Find a route between source and destination using the specified algorithm.
 
@@ -286,6 +291,7 @@ class Topology:
             destination: Destination node ID.
             algorithm: 'dijkstra', 'link_state', 'distance_vector', or 'xar'.
             metric: 'hop'/'hops' or 'latency'.
+            profile: Traffic profile used by the 'xar' algorithm.
 
         Returns:
             RouteResult: {'path': [...], 'hop_count': int, 'latency': float, 'status': ..., 'message': ..., 'algorithm': ...}
@@ -345,7 +351,7 @@ class Topology:
             try:
                 from adaptive.xar import xar_find_route
 
-                return xar_find_route(self, source, destination)
+                return xar_find_route(self, source, destination, profile=profile)
             except (ImportError, NotImplementedError):
                 return {
                     "path": [],
@@ -437,6 +443,7 @@ def find_route(
     destination: str,
     algorithm: str = "dijkstra",
     metric: str = "hop",
+    profile: str = "standard",
 ) -> RouteResult:
     """Find a route between source and destination using the specified algorithm.
 
@@ -446,6 +453,7 @@ def find_route(
         destination: Destination node ID.
         algorithm: 'dijkstra', 'distance_vector', or 'xar'.
         metric: 'hop'/'hops' or 'latency'.
+        profile: Traffic profile used by the 'xar' algorithm.
 
     Returns:
         RouteResult dictionary with keys path, hop_count, latency, status, message, algorithm.
@@ -457,7 +465,7 @@ def find_route(
         >>> res["status"]
         'success'
     """
-    return topology.find_route(source=source, destination=destination, algorithm=algorithm, metric=metric)
+    return topology.find_route(source=source, destination=destination, algorithm=algorithm, metric=metric, profile=profile)
 
 
 def enumerate_paths(

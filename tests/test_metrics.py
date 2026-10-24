@@ -13,7 +13,6 @@ from adaptive.traffic_profiles import get_profile_weights
 from network.topology import Topology
 
 
-@pytest.mark.skip(reason="Member 2 to implement aggregate_path_metrics")
 def test_aggregate_path_metrics_calculation(linear_topology: Topology) -> None:
     metrics = aggregate_path_metrics(linear_topology, ["PC1", "R1", "PC2"])
     assert metrics["latency"] == 15.0
@@ -21,7 +20,6 @@ def test_aggregate_path_metrics_calculation(linear_topology: Topology) -> None:
     assert metrics["congestion"] == 0.2
 
 
-@pytest.mark.skip(reason="Member 2 to implement normalize_metrics")
 def test_normalize_metrics_bounds() -> None:
     raw = {
         "latency": 50.0,
@@ -38,7 +36,6 @@ def test_normalize_metrics_bounds() -> None:
     assert norm["R_penalty"] == pytest.approx(0.05)
 
 
-@pytest.mark.skip(reason="Member 2 to implement compute_path_score")
 def test_compute_path_score() -> None:
     norm = {
         "H": 0.3,

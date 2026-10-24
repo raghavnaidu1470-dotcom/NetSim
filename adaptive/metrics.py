@@ -54,16 +54,30 @@ def aggregate_path_metrics(topology: Topology, path: List[str]) -> RawPathMetric
         >>> metrics = aggregate_path_metrics(topo, ['PC1', 'R1', 'PC2'])
         >>> print(metrics['latency'])
         14.0
-
-    Raises:
-        NotImplementedError: If not yet implemented by Member 2.
     """
-    # TODO(Member 2 - Step 1): Verify path length >= 2; return zeros for single node/empty.
-    # TODO(Member 2 - Step 2): Iterate consecutive pairs (path[i], path[i+1]).
-    # TODO(Member 2 - Step 3): Sum latency, compute success_prob = prod(1 - loss),
-    #                          compute reliability_prod = prod(rel), record link congestion.
-    # TODO(Member 2 - Step 4): Return RawPathMetrics with aggregated values.
-    raise NotImplementedError("Member 2 to implement aggregate_path_metrics in adaptive/metrics.py")
+    if not path or len(path) < 2:
+        return {"latency": 0.0, "packet_loss": 0.0, "reliability": 1.0, "congestion": 0.0, "hop_count": 0}
+
+    total_latency = 0.0
+    success_prob = 1.0
+    reliability_prod = 1.0
+    bottleneck = 0.0
+    for u, v in zip(path, path[1:]):
+        link = topology.get_link(u, v)
+        if link is None:
+            raise ValueError(f"No link found between {u} and {v}")
+        total_latency += link.latency
+        success_prob *= 1.0 - link.packet_loss
+        reliability_prod *= link.reliability
+        bottleneck = max(bottleneck, link.congestion)
+
+    return {
+        "latency": round(total_latency, 2),
+        "packet_loss": round(1.0 - success_prob, 4),
+        "reliability": round(reliability_prod, 4),
+        "congestion": round(bottleneck, 4),
+        "hop_count": len(path) - 1,
+    }
 
 
 def normalize_metrics(raw: RawPathMetrics) -> NormalizedMetrics:
@@ -81,14 +95,17 @@ def normalize_metrics(raw: RawPathMetrics) -> NormalizedMetrics:
 
     Returns:
         NormalizedMetrics with all fields in [0.0, 1.0].
-
-    Raises:
-        NotImplementedError: If not yet implemented by Member 2.
     """
-    # TODO(Member 2 - Step 1): Apply ceilings MAX_HOPS_CEILING and MAX_LATENCY_CEILING.
-    # TODO(Member 2 - Step 2): Calculate R_penalty as (1.0 - raw['reliability']).
-    # TODO(Member 2 - Step 3): Clamp all values strictly to [0.0, 1.0] to prevent rounding overflow.
-    raise NotImplementedError("Member 2 to implement normalize_metrics in adaptive/metrics.py")
+    def clamp(x: float) -> float:
+        return min(1.0, max(0.0, float(x)))
+
+    return {
+        "H": clamp(raw["hop_count"] / MAX_HOPS_CEILING),
+        "L": clamp(raw["latency"] / MAX_LATENCY_CEILING),
+        "C": clamp(raw["congestion"]),
+        "P": clamp(raw["packet_loss"]),
+        "R_penalty": clamp(1.0 - raw["reliability"]),
+    }
 
 
 def compute_path_score(norm: NormalizedMetrics, weights: ProfileWeights) -> float:
@@ -104,10 +121,12 @@ def compute_path_score(norm: NormalizedMetrics, weights: ProfileWeights) -> floa
 
     Returns:
         Calculated scalar score (float between 0.0 and 1.0).
-
-    Raises:
-        NotImplementedError: If not yet implemented by Member 2.
     """
-    # TODO(Member 2 - Step 1): Multiply each normalized component by its corresponding weight.
-    # TODO(Member 2 - Step 2): Sum the products and round to 4 decimal places.
-    raise NotImplementedError("Member 2 to implement compute_path_score in adaptive/metrics.py")
+    score = (
+        weights.w_h * norm["H"]
+        + weights.w_l * norm["L"]
+        + weights.w_c * norm["C"]
+        + weights.w_p * norm["P"]
+        + weights.w_r * norm["R_penalty"]
+    )
+    return round(score, 4)

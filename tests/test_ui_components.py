@@ -41,14 +41,34 @@ def test_draw_topology_graph_with_inactive_elements(triangle_topology: Topology)
     plt.close(fig)
 
 
-def test_xar_adapter_fallback_and_badge() -> None:
-    """XAR adapter must fall back to spec scoring with reference preview badge when Member 2 engine is absent."""
+def test_xar_adapter_uses_real_engine() -> None:
+    """With Member 2's engine merged, the adapter returns its result and no reference-preview badge is needed."""
+    topo = Topology.load_json(TOPOLOGIES_DIR / "why_shortest_is_not_best.json")
+    route, metrics, score, is_fallback = resolve_xar_route(topo, "PC1", "PC2", profile="standard")
+
+    assert is_fallback is False
+    assert route["status"] == "success"
+    assert route["algorithm"] == "xar"
+    # In Demo 1, XAR must select Route B (PC1 -> R1 -> R3 -> R4 -> R5 -> PC2)
+    assert route["path"] == ["PC1", "R1", "R3", "R4", "R5", "PC2"]
+    assert route["hop_count"] == 5
+    assert route["latency"] == 36.0
+    assert 0.17 <= score <= 0.19
+
+
+def test_xar_adapter_fallback_and_badge(monkeypatch) -> None:
+    """If the engine is unavailable the adapter falls back to spec scoring and flags the reference preview."""
+    import adaptive.xar
+
+    def unavailable(*args, **kwargs):
+        raise NotImplementedError("engine not available")
+
+    monkeypatch.setattr(adaptive.xar, "xar_find_route", unavailable)
     topo = Topology.load_json(TOPOLOGIES_DIR / "why_shortest_is_not_best.json")
     route, metrics, score, is_fallback = resolve_xar_route(topo, "PC1", "PC2", profile="standard")
 
     assert is_fallback is True
     assert route["status"] == "success"
-    # In Demo 1, XAR must select Route B (PC1 -> R1 -> R3 -> R4 -> R5 -> PC2)
     assert route["path"] == ["PC1", "R1", "R3", "R4", "R5", "PC2"]
     assert route["hop_count"] == 5
     assert route["latency"] == 36.0
@@ -57,12 +77,31 @@ def test_xar_adapter_fallback_and_badge() -> None:
 
 
 def test_xar_adapter_explanation_generation() -> None:
-    """Verifies explanation engine creates meaningful delta justification between routes."""
+    """The real explanation engine states the metric deltas and the hop trade-off."""
     topo = Topology.load_json(TOPOLOGIES_DIR / "why_shortest_is_not_best.json")
     sel_path = ["PC1", "R1", "R3", "R4", "R5", "PC2"]
     alt_path = ["PC1", "R1", "R2", "R5", "PC2"]
 
     explanation, is_fallback = generate_xar_explanation(topo, sel_path, alt_path, profile="standard")
+    assert is_fallback is False
+    assert "latency was 43.0 ms lower" in explanation
+    assert "congestion was 70.0% lower" in explanation
+    assert "expected packet loss was 16.0% lower" in explanation
+    assert "1 fewer hop" in explanation
+
+
+def test_xar_adapter_explanation_fallback(monkeypatch) -> None:
+    """If the explanation engine is unavailable the adapter still produces a delta justification."""
+    import adaptive.explanation
+
+    def unavailable(*args, **kwargs):
+        raise NotImplementedError("engine not available")
+
+    monkeypatch.setattr(adaptive.explanation, "compare_routes", unavailable)
+    topo = Topology.load_json(TOPOLOGIES_DIR / "why_shortest_is_not_best.json")
+    explanation, is_fallback = generate_xar_explanation(
+        topo, ["PC1", "R1", "R3", "R4", "R5", "PC2"], ["PC1", "R1", "R2", "R5", "PC2"], profile="standard"
+    )
     assert is_fallback is True
     assert "latency is 43.0 ms lower" in explanation
     assert "bottleneck congestion is 70% lower" in explanation
