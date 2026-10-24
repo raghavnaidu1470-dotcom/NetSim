@@ -25,22 +25,22 @@ def set_link_congestion(topology: Topology, u: str, v: str, congestion_level: fl
 
     Returns:
         True if successfully applied, False if link not found.
-
-    Raises:
-        NotImplementedError: If not yet implemented by Member 2.
     """
-    # TODO(Member 2 - Step 1): Validate congestion_level is in [0.0, 1.0].
-    # TODO(Member 2 - Step 2): Call topology.update_link_metrics(u, v, congestion=congestion_level).
-    # TODO(Member 2 - Step 3): Return success boolean.
-    raise NotImplementedError("Member 2 to implement set_link_congestion in simulation/congestion.py")
+    if not (0.0 <= congestion_level <= 1.0):
+        raise ValueError(f"Congestion level must be within [0.0, 1.0]: {congestion_level}")
+    return bool(topology.update_link_metrics(u, v, congestion=congestion_level))
 
 
 def apply_burst_congestion(topology: Topology, u: str, v: str, multiplier: float = 1.5) -> float:
     """Increase link congestion by a multiplier up to maximum 1.0.
-
-    Raises:
-        NotImplementedError: If not yet implemented by Member 2.
     """
-    # TODO(Member 2 - Step 1): Retrieve existing link congestion.
-    # TODO(Member 2 - Step 2): Multiply, clamp to 1.0, update link, and return new level.
-    raise NotImplementedError("Member 2 to implement apply_burst_congestion in simulation/congestion.py")
+    if multiplier < 0:
+        raise ValueError("Burst multiplier must be non-negative")
+    link = topology.get_link(u, v)
+    if link is None:
+        raise ValueError(f"No link found between {u} and {v}")
+    # A fully idle link would stay at 0 under pure multiplication, so a burst starts from a 10% floor.
+    base = link.congestion if link.congestion > 0 else 0.1
+    new_level = min(1.0, base * multiplier)
+    topology.update_link_metrics(u, v, congestion=new_level)
+    return new_level

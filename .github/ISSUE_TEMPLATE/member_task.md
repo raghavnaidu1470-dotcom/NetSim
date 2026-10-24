@@ -10,9 +10,9 @@ assignees: ''
 <!-- Summary of module or feature deliverable. -->
 
 ## Assigned Member
-- [ ] Member 1: Network & Routing Engine (`network/`)
-- [ ] Member 2: Adaptive Routing & Simulation (`adaptive/`, `simulation/`)
-- [ ] Member 3: UI & Protocols (`ui/`, `protocols/`)
+- [ ] Member 1 (Ragghav Kamaraj): Network & Routing Engine (`network/`)
+- [ ] Member 2 (Harish): Adaptive Routing & Simulation (`adaptive/`, `simulation/`)
+- [ ] Member 3 (Akhilesh Reddy): UI & Protocols (`ui/`, `protocols/`)
 
 ## Sprint Phase / Milestone
 - [ ] Phase 1 (Days 1–2): Design & Specs

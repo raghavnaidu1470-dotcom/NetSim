@@ -8,7 +8,7 @@ This document establishes the end-to-end integration contracts connecting the UI
 
 ```text
 +-------------------+
-|  Streamlit UI     | (Member 3)
+|  Streamlit UI     | (Member 3 - Akhilesh Reddy)
 |  User selects:    |
 |  - Topology       |
 |  - Source/Dest    |
@@ -17,14 +17,14 @@ This document establishes the end-to-end integration contracts connecting the UI
           |
           v
 +-------------------+
-|  Topology Engine  | (Member 1)
+|  Topology Engine  | (Member 1 - Ragghav Kamaraj)
 |  - to_networkx()  |
 |  - enumerate_paths|
 +---------+---------+
           |
           v
 +-------------------+
-|  XAR Engine       | (Member 2)
+|  XAR Engine       | (Member 2 - Harish)
 |  - aggregate_path |
 |  - normalize      |
 |  - score candidates
@@ -32,14 +32,14 @@ This document establishes the end-to-end integration contracts connecting the UI
           |
           v
 +-------------------+
-|  Explanation      | (Member 2)
+|  Explanation      | (Member 2 - Harish)
 |  - compare_routes |
 |  - generate text  |
 +---------+---------+
           |
           v
 +-------------------+
-|  UI Visualization | (Member 3)
+|  UI Visualization | (Member 3 - Akhilesh Reddy)
 |  - draw_topology  |
 |  - comparison tab |
 |  - explanation box|
@@ -84,7 +84,7 @@ This document establishes the end-to-end integration contracts connecting the UI
 - **Criteria**:
   - `Topology.load_json` loads all 3 topologies without errors.
   - Selecting any valid pair of nodes highlights Dijkstra path in UI.
-  - Mock data available in `adaptive.mock_data` to unblock Member 3 while Member 2 finalizes XAR scoring.
+  - Mock data available in `adaptive.mock_data` to unblock Member 3 (Akhilesh Reddy) while Member 2 (Harish) finalizes XAR scoring.
 
 ### Checkpoint 2: Days 8–9 (Failure Recovery & Disruption)
 - **Goal**: Disruption triggers propagate from UI into graph deactivation and recalculation.

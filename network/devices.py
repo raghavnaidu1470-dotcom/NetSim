@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import ipaddress
 from dataclasses import asdict, dataclass
-from typing import Any, Dict, List, Literal, Optional, TypedDict
+from typing import Any, Dict, List, Literal, Optional, Tuple, TypedDict
 
 NodeType = Literal["router", "host"]
 RouteStatus = Literal["success", "no_route", "invalid"]
@@ -22,6 +22,12 @@ def validate_ipv4(ip: str) -> bool:
 
     Returns:
         True if valid IPv4, False otherwise.
+
+    Example:
+        >>> validate_ipv4("192.168.1.1")
+        True
+        >>> validate_ipv4("256.0.0.1")
+        False
     """
     if not isinstance(ip, str) or not ip.strip():
         return False
@@ -30,6 +36,32 @@ def validate_ipv4(ip: str) -> bool:
         return True
     except ValueError:
         return False
+
+
+def validate_ipv4_address(ip: str) -> Tuple[bool, str]:
+    """Validate whether an IP string is a valid IPv4 address with descriptive message.
+
+    Args:
+        ip: String representation of an IPv4 address.
+
+    Returns:
+        Tuple of (is_valid: bool, message: str).
+
+    Example:
+        >>> is_valid, msg = validate_ipv4_address("192.168.1.1")
+        >>> is_valid
+        True
+        >>> is_valid, msg = validate_ipv4_address("invalid_ip")
+        >>> is_valid
+        False
+    """
+    if not isinstance(ip, str) or not ip.strip():
+        return False, "IP address cannot be empty or non-string"
+    try:
+        addr = ipaddress.IPv4Address(ip.strip())
+        return True, f"Valid IPv4 address: {addr}"
+    except ValueError as exc:
+        return False, f"Invalid IPv4 address '{ip}': {exc}"
 
 
 class NodeDict(TypedDict):
@@ -52,12 +84,23 @@ class LinkDict(TypedDict):
     active: bool
 
 
-class RouteResult(TypedDict):
-    """Standard routing query return schema across all routing engines."""
+class RouteResult(TypedDict, total=False):
+    """Standard routing query return schema across all routing engines.
+
+    Attributes:
+        path: Ordered list of node identifiers.
+        hop_count: Number of links traversed (len(path) - 1).
+        latency: Aggregated path latency in milliseconds.
+        status: Status flag ('success', 'no_route', 'invalid').
+        message: Explanatory human-friendly status message.
+        algorithm: Identifier of the routing algorithm used.
+    """
     path: List[str]
     hop_count: int
     latency: float
     status: RouteStatus
+    message: str
+    algorithm: str
 
 
 @dataclass
@@ -69,6 +112,11 @@ class Node:
         ip: Valid IPv4 address string (e.g. '192.168.1.1').
         type: 'router' or 'host'.
         active: Operational status flag (True = active/up, False = down/failed).
+
+    Example:
+        >>> node = Node(id="R1", ip="192.168.1.1", type="router", active=True)
+        >>> node.to_dict()["id"]
+        'R1'
     """
     id: str
     ip: str
@@ -78,8 +126,9 @@ class Node:
     def __post_init__(self) -> None:
         if not self.id or not isinstance(self.id, str):
             raise ValueError(f"Invalid node id: {self.id}")
-        if not validate_ipv4(self.ip):
-            raise ValueError(f"Invalid IPv4 address '{self.ip}' for node '{self.id}'")
+        is_valid, msg = validate_ipv4_address(self.ip)
+        if not is_valid:
+            raise ValueError(f"Invalid IPv4 address '{self.ip}' for node '{self.id}': {msg}")
         if self.type not in ("router", "host"):
             raise ValueError(f"Invalid node type '{self.type}'. Must be 'router' or 'host'")
 
@@ -114,6 +163,11 @@ class Link:
         packet_loss: Probability of loss in [0.0, 1.0].
         reliability: Link operational reliability in [0.0, 1.0].
         active: Link operational state (True = up, False = severed/down).
+
+    Example:
+        >>> link = Link(source="R1", destination="R2", latency=10.0, bandwidth=100.0)
+        >>> link.source
+        'R1'
     """
     source: str
     destination: str

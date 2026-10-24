@@ -10,7 +10,6 @@ from network.topology import Topology
 TOPOLOGY_DIR = Path(__file__).resolve().parent.parent / "data" / "topologies"
 
 
-@pytest.mark.skip(reason="Member 2 to implement evaluate_all_candidate_paths")
 def test_evaluate_all_candidate_paths_demo1() -> None:
     topo = Topology.load_json(TOPOLOGY_DIR / "why_shortest_is_not_best.json")
     evals = evaluate_all_candidate_paths(topo, "PC1", "PC2", profile="standard")
@@ -20,7 +19,6 @@ def test_evaluate_all_candidate_paths_demo1() -> None:
     assert evals[0]["score"] < evals[1]["score"]
 
 
-@pytest.mark.skip(reason="Member 2 to implement xar_find_route")
 def test_xar_find_route_selects_clean_path() -> None:
     topo = Topology.load_json(TOPOLOGY_DIR / "why_shortest_is_not_best.json")
     route = xar_find_route(topo, "PC1", "PC2", profile="standard")

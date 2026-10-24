@@ -6,9 +6,9 @@ Thank you for contributing to NetSim-X! To ensure smooth collaboration across ou
 
 ## 1. Team Ownership Boundaries
 To eliminate git merge conflicts, folders are strictly partitioned:
-- **Member 1**: `network/`, `data/topologies/`
+- **Member 1 (Ragghav Kamaraj)**: `network/`, `data/topologies/`
 - **Member 2 (Harish)**: `adaptive/`, `simulation/`
-- **Member 3 (Akhilesh)**: `ui/`, `protocols/`
+- **Member 3 (Akhilesh Reddy)**: `ui/`, `protocols/`
 
 **Rule**: Do not edit files belonging to other team members unless coordinated in an integration meeting.
 

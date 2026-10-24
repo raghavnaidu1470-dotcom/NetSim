@@ -6,7 +6,6 @@ from network.topology import Topology
 from simulation.congestion import apply_burst_congestion, set_link_congestion
 
 
-@pytest.mark.skip(reason="Member 2 to implement set_link_congestion")
 def test_set_link_congestion(linear_topology: Topology) -> None:
     res = set_link_congestion(linear_topology, "PC1", "R1", 0.75)
     assert res is True
@@ -15,7 +14,6 @@ def test_set_link_congestion(linear_topology: Topology) -> None:
     assert link.congestion == 0.75
 
 
-@pytest.mark.skip(reason="Member 2 to implement apply_burst_congestion")
 def test_apply_burst_congestion(linear_topology: Topology) -> None:
     new_cong = apply_burst_congestion(linear_topology, "PC1", "R1", multiplier=2.0)
     assert new_cong > 0.1

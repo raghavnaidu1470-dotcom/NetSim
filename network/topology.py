@@ -31,10 +31,32 @@ class Topology:
         self.nodes: Dict[str, Node] = {}
         self.links: List[Link] = []
 
-    def add_node(self, node: Node) -> None:
-        """Add a validated Node to the topology."""
+    def add_node(self, node: Node, allow_duplicate_ip: bool = False) -> None:
+        """Add a validated Node to the topology.
+
+        Args:
+            node: Node instance to register.
+            allow_duplicate_ip: Whether to allow conflicting IP assignments across distinct nodes.
+
+        Raises:
+            TypeError: If node is not an instance of Node.
+            ValueError: If a duplicate IPv4 address is detected on another node.
+
+        Example:
+            >>> topo = Topology("my_net")
+            >>> topo.add_node(Node(id="R1", ip="10.0.0.1"))
+            >>> topo.get_node("R1").ip
+            '10.0.0.1'
+        """
         if not isinstance(node, Node):
             raise TypeError("node must be an instance of Node")
+        if not allow_duplicate_ip:
+            for existing_id, existing_node in self.nodes.items():
+                if existing_id != node.id and existing_node.ip == node.ip:
+                    raise ValueError(
+                        f"Duplicate IPv4 address '{node.ip}': node '{node.id}' "
+                        f"conflicts with existing node '{existing_id}'"
+                    )
         self.nodes[node.id] = node
 
     def add_link(self, link: Link) -> None:
@@ -163,13 +185,22 @@ class Topology:
     ) -> List[List[str]]:
         """Enumerate all simple active paths between source and destination up to max_hops.
 
+        Traverses active nodes and links only, in deterministic sorted order
+        (fewest hops first, then lexicographically by node names).
+
         Args:
             source: Source node ID.
             destination: Destination node ID.
             max_hops: Maximum number of hops (edges) allowed along the path.
 
         Returns:
-            List of node ID sequences representing valid paths.
+            Deterministic list of node ID sequences representing valid paths.
+
+        Example:
+            >>> topo = Topology.load_json("data/topologies/why_shortest_is_not_best.json")
+            >>> paths = topo.enumerate_paths("PC1", "PC2", max_hops=8)
+            >>> len(paths)
+            2
         """
         if source not in self.nodes or destination not in self.nodes:
             return []
@@ -188,6 +219,8 @@ class Topology:
                     G, source=source, target=destination, cutoff=max_hops
                 )
             )
+            # Deterministic sorting: fewest hops first, then lexicographical order
+            paths.sort(key=lambda p: (len(p), p))
             return paths
         except nx.NetworkXNoPath:
             return []
@@ -201,6 +234,12 @@ class Topology:
         - Reliability = Product of link reliabilities
         - Congestion = Max of link congestions (bottleneck)
         - Hop count = Number of links (len(path) - 1)
+
+        Example:
+            >>> topo = Topology.load_json("data/topologies/why_shortest_is_not_best.json")
+            >>> m = topo.get_path_metrics(["PC1", "R1", "R2", "R5", "PC2"])
+            >>> m["hop_count"]
+            4
         """
         if not path or len(path) <= 1:
             return {
@@ -238,7 +277,12 @@ class Topology:
         }
 
     def find_route(
-        self, source: str, destination: str, algorithm: str = "dijkstra"
+        self,
+        source: str,
+        destination: str,
+        algorithm: str = "dijkstra",
+        metric: str = "hop",
+        profile: str = "standard",
     ) -> RouteResult:
         """Find a route between source and destination using the specified algorithm.
 
@@ -246,26 +290,38 @@ class Topology:
             source: Source node ID.
             destination: Destination node ID.
             algorithm: 'dijkstra', 'link_state', 'distance_vector', or 'xar'.
+            metric: 'hop'/'hops' or 'latency'.
+            profile: Traffic profile used by the 'xar' algorithm.
 
         Returns:
-            RouteResult: {'path': [...], 'hop_count': int, 'latency': float, 'status': 'success'|'no_route'|'invalid'}
+            RouteResult: {'path': [...], 'hop_count': int, 'latency': float, 'status': ..., 'message': ..., 'algorithm': ...}
+
+        Example:
+            >>> topo = Topology.load_json("data/topologies/why_shortest_is_not_best.json")
+            >>> res = topo.find_route("PC1", "PC2", algorithm="dijkstra")
+            >>> res["status"]
+            'success'
         """
-        # Validate node existence
         if source not in self.nodes or destination not in self.nodes:
+            missing = [n for n in (source, destination) if n not in self.nodes]
             return {
                 "path": [],
                 "hop_count": 0,
                 "latency": 0.0,
                 "status": "invalid",
+                "message": f"Node does not exist in topology: {', '.join(missing)}",
+                "algorithm": algorithm,
             }
 
-        # Check active status
         if not self.nodes[source].active or not self.nodes[destination].active:
+            inactive = [n for n in (source, destination) if not self.nodes[n].active]
             return {
                 "path": [],
                 "hop_count": 0,
                 "latency": 0.0,
                 "status": "no_route",
+                "message": f"Node is inactive/down: {', '.join(inactive)}",
+                "algorithm": algorithm,
             }
 
         if source == destination:
@@ -274,6 +330,8 @@ class Topology:
                 "hop_count": 0,
                 "latency": 0.0,
                 "status": "success",
+                "message": "Source and destination are identical",
+                "algorithm": algorithm,
             }
 
         algo = algorithm.lower().strip()
@@ -281,24 +339,28 @@ class Topology:
         if algo in ("dijkstra", "link_state"):
             from network.link_state import link_state_dijkstra
 
-            return link_state_dijkstra(self, source, destination)
+            return link_state_dijkstra(self, source, destination, metric=metric)
 
         elif algo in ("distance_vector", "dv"):
             from network.distance_vector import distance_vector_routing
 
-            dv_result = distance_vector_routing(self, source, destination)
+            dv_result = distance_vector_routing(self, source, destination, metric=metric)
             return dv_result["route"]
 
         elif algo == "xar":
             try:
                 from adaptive.xar import xar_find_route
 
-                return xar_find_route(self, source, destination)
+                return xar_find_route(self, source, destination, profile=profile)
             except (ImportError, NotImplementedError):
-                # Fallback to link state if XAR not yet implemented
-                from network.link_state import link_state_dijkstra
-
-                return link_state_dijkstra(self, source, destination)
+                return {
+                    "path": [],
+                    "hop_count": 0,
+                    "latency": 0.0,
+                    "status": "invalid",
+                    "message": "XAR not implemented yet",
+                    "algorithm": "xar",
+                }
 
         else:
             return {
@@ -306,11 +368,19 @@ class Topology:
                 "hop_count": 0,
                 "latency": 0.0,
                 "status": "invalid",
+                "message": f"Unsupported routing algorithm: '{algorithm}'. Expected 'dijkstra', 'distance_vector', or 'xar'.",
+                "algorithm": algorithm,
             }
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> Topology:
-        """Build Topology instance from a parsed dictionary."""
+        """Build Topology instance from a parsed dictionary.
+
+        Example:
+            >>> topo = Topology.from_dict({"name": "t1", "nodes": [], "links": []})
+            >>> topo.name
+            't1'
+        """
         name = data.get("name", "custom")
         desc = data.get("description", "")
         topo = cls(name=name, description=desc)
@@ -327,13 +397,35 @@ class Topology:
 
     @classmethod
     def load_json(cls, file_path: Union[str, Path]) -> Topology:
-        """Load Topology instance from a JSON file."""
+        """Load Topology instance from a JSON file.
+
+        Example:
+            >>> topo = Topology.load_json("data/topologies/why_shortest_is_not_best.json")
+            >>> "PC1" in topo.nodes
+            True
+        """
         path = Path(file_path)
         if not path.is_file():
             raise FileNotFoundError(f"Topology file not found: {file_path}")
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         return cls.from_dict(data)
+
+    def save_json(self, file_path: Union[str, Path], indent: int = 2) -> None:
+        """Save Topology instance to a JSON file.
+
+        Args:
+            file_path: Output file path.
+            indent: Indentation spaces for formatted JSON (default 2).
+
+        Example:
+            >>> topo = Topology("test_save")
+            >>> topo.save_json("/tmp/test_topo.json")
+        """
+        path = Path(file_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(self.to_dict(), f, indent=indent)
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert Topology to a serializable dictionary matching the schema."""
@@ -343,3 +435,84 @@ class Topology:
             "nodes": [node.to_dict() for node in self.nodes.values()],
             "links": [link.to_dict() for link in self.links],
         }
+
+
+def find_route(
+    topology: Topology,
+    source: str,
+    destination: str,
+    algorithm: str = "dijkstra",
+    metric: str = "hop",
+    profile: str = "standard",
+) -> RouteResult:
+    """Find a route between source and destination using the specified algorithm.
+
+    Args:
+        topology: Active Topology instance.
+        source: Source node ID.
+        destination: Destination node ID.
+        algorithm: 'dijkstra', 'distance_vector', or 'xar'.
+        metric: 'hop'/'hops' or 'latency'.
+        profile: Traffic profile used by the 'xar' algorithm.
+
+    Returns:
+        RouteResult dictionary with keys path, hop_count, latency, status, message, algorithm.
+
+    Example:
+        >>> from network.topology import Topology, find_route
+        >>> topo = Topology.load_json("data/topologies/why_shortest_is_not_best.json")
+        >>> res = find_route(topo, "PC1", "PC2", algorithm="dijkstra")
+        >>> res["status"]
+        'success'
+    """
+    return topology.find_route(source=source, destination=destination, algorithm=algorithm, metric=metric, profile=profile)
+
+
+def enumerate_paths(
+    topology: Topology,
+    source: str,
+    destination: str,
+    max_hops: int = 8,
+) -> List[List[str]]:
+    """Enumerate all simple active paths between source and destination up to max_hops.
+
+    Args:
+        topology: Active Topology instance.
+        source: Source node ID.
+        destination: Destination node ID.
+        max_hops: Maximum number of hops allowed along the path.
+
+    Returns:
+        Deterministic sorted list of candidate paths over active nodes and links.
+
+    Example:
+        >>> from network.topology import Topology, enumerate_paths
+        >>> topo = Topology.load_json("data/topologies/why_shortest_is_not_best.json")
+        >>> paths = enumerate_paths(topo, "PC1", "PC2", max_hops=8)
+        >>> len(paths)
+        2
+    """
+    return topology.enumerate_paths(source=source, destination=destination, max_hops=max_hops)
+
+
+def get_path_metrics(
+    topology: Topology,
+    path: List[str],
+) -> Dict[str, float]:
+    """Aggregate link metrics along a given path using topology link properties.
+
+    Args:
+        topology: Active Topology instance.
+        path: List of node IDs representing the route.
+
+    Returns:
+        Aggregated metrics dictionary (latency, packet_loss, reliability, congestion, hop_count).
+
+    Example:
+        >>> from network.topology import Topology, get_path_metrics
+        >>> topo = Topology.load_json("data/topologies/why_shortest_is_not_best.json")
+        >>> metrics = get_path_metrics(topo, ["PC1", "R1", "R2", "R5", "PC2"])
+        >>> metrics["hop_count"]
+        4
+    """
+    return topology.get_path_metrics(path)

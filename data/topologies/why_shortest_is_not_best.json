@@ -1,6 +1,6 @@
 {
   "name": "why_shortest_is_not_best",
-  "description": "Demonstrates why hop-count shortest path (Dijkstra) is suboptimal under congestion and loss compared to XAR.",
+  "description": "Demonstrates why Dijkstra (hop-count metric) is suboptimal under congestion and loss compared to XAR. Note: With a latency metric Dijkstra would also select the faster 5-hop path, which is why this demo uses hop count to show the classic shortest-path pitfall.",
   "nodes": [
     {"id": "PC1", "ip": "192.168.1.10", "type": "host", "active": true},
     {"id": "R1", "ip": "192.168.1.1", "type": "router", "active": true},
